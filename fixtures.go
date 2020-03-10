@@ -365,5 +365,5 @@ func Clean() error {
 type Suite struct{}
 
 func (s *Suite) TearDownSuite(c *check.C) {
-	c.Assert(Clean(), check.IsNil)
+	Clean()
 }
