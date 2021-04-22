@@ -5,8 +5,10 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
+
+	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v5/util"
 )
 
 const (
@@ -25,10 +27,10 @@ const (
 // before the error and the temporal directory has not been created.
 // Otherwise, a non-empty string with the temporal directory holding
 // whatever information was extracted before the error is returned.
-func Extract(tgz string) (d string, err error) {
-	f, err := os.Open(tgz)
+func Extract(fs billy.Filesystem, tgz string) (billy.Filesystem, error) {
+	f, err := fs.Open(tgz)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	defer func() {
@@ -38,21 +40,21 @@ func Extract(tgz string) (d string, err error) {
 		}
 	}()
 
-	d, err = ioutil.TempDir(useDefaultTempDir, tmpPrefix)
+	d, err := util.TempDir(fs, useDefaultTempDir, tmpPrefix)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	tar, err := zipTarReader(f)
 	if err != nil {
-		return d, err
+		return nil, err
 	}
 
-	if err = unTar(tar, d); err != nil {
-		return d, err
+	if err = unTar(fs, tar, d); err != nil {
+		return nil, err
 	}
 
-	return d, nil
+	return fs.Chroot(d)
 }
 
 func zipTarReader(r io.Reader) (*tar.Reader, error) {
@@ -64,7 +66,7 @@ func zipTarReader(r io.Reader) (*tar.Reader, error) {
 	return tar.NewReader(zip), nil
 }
 
-func unTar(src *tar.Reader, dstPath string) error {
+func unTar(fs billy.Filesystem, src *tar.Reader, dstPath string) error {
 	for {
 		header, err := src.Next()
 		if err != nil {
@@ -78,12 +80,12 @@ func unTar(src *tar.Reader, dstPath string) error {
 		mode := os.FileMode(header.Mode)
 		switch header.Typeflag {
 		case tar.TypeDir:
-			err := os.MkdirAll(dst, mode)
+			err := fs.MkdirAll(dst, mode)
 			if err != nil {
 				return err
 			}
 		case tar.TypeReg:
-			err := makeFile(dst, mode, src)
+			err := makeFile(fs, dst, mode, src)
 			if err != nil {
 				return err
 			}
@@ -96,8 +98,8 @@ func unTar(src *tar.Reader, dstPath string) error {
 	return nil
 }
 
-func makeFile(path string, mode os.FileMode, contents io.Reader) (err error) {
-	w, err := os.Create(path)
+func makeFile(fs billy.Filesystem, path string, mode os.FileMode, contents io.Reader) (err error) {
+	w, err := fs.Create(path)
 	if err != nil {
 		return err
 	}
@@ -113,8 +115,10 @@ func makeFile(path string, mode os.FileMode, contents io.Reader) (err error) {
 		return err
 	}
 
-	if err = os.Chmod(path, mode); err != nil {
-		return err
+	if fs, ok := fs.(billy.Change); ok {
+		if err = fs.Chmod(path, mode); err != nil {
+			return err
+		}
 	}
 
 	return nil

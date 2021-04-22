@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"sort"
 	"testing"
+
+	"github.com/go-git/go-billy/v5/osfs"
 )
 
 func TestExtractError(t *testing.T) {
@@ -27,7 +29,7 @@ func TestExtractError(t *testing.T) {
 		},
 	} {
 		com := fmt.Sprintf("%d) tgz path = %s", i, test.tgz)
-		path, err := Extract(test.tgz)
+		path, err := Extract(osfs.New(""), test.tgz)
 		if err == nil {
 			t.Errorf("%s: expect an error, but none was returned", com)
 		} else if errorNotMatch(err, test.errRgx) {
@@ -82,9 +84,9 @@ func TestExtract(t *testing.T) {
 	} {
 		com := fmt.Sprintf("%d) tgz path = %s", i, test.tgz)
 
-		path, err := Extract(test.tgz)
+		path, err := Extract(osfs.New(""), test.tgz)
 		if err != nil {
-			t.Fatalf("%s: unexpected error extracting: %s", err)
+			t.Fatalf("%s: unexpected error extracting: %s", test.tgz, err)
 		}
 
 		obt, err := relativeTree(path)
