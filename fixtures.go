@@ -3,19 +3,21 @@ package fixtures
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
-	"github.com/alcortesm/tgz"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-git-fixtures/v4/internal/tgz"
 	"gopkg.in/check.v1"
 )
 
 //go:generate esc -o data.go -pkg=fixtures data
 
-var files = make(map[string]string)
+var (
+	files = make(map[string]string)
+	fs    = osfs.New(os.TempDir())
+)
 
 var fixtures = Fixtures{{
 	Tags:         []string{"packfile", "ofs-delta", ".git", "root-reference"},
@@ -203,9 +205,9 @@ func (f *Fixture) Is(tag string) bool {
 	return false
 }
 
-func (f *Fixture) file(path string) (*os.File, error) {
+func (f *Fixture) file(path string) (billy.File, error) {
 	if fpath, ok := files[path]; ok {
-		return os.Open(fpath)
+		return fs.Open(fpath)
 	}
 
 	bytes, err := FSByte(false, "/data/"+path)
@@ -213,7 +215,7 @@ func (f *Fixture) file(path string) (*os.File, error) {
 		return nil, err
 	}
 
-	file, err := ioutil.TempFile(os.TempDir(), "go-git-fixtures")
+	file, err := fs.TempFile("", "go-git-fixtures")
 	if err != nil {
 		return nil, err
 	}
@@ -222,32 +224,29 @@ func (f *Fixture) file(path string) (*os.File, error) {
 		return nil, err
 	}
 
-	if err := file.Sync(); err != nil {
-		return nil, err
-	}
-
-	if _, err := file.Seek(0, io.SeekStart); err != nil {
+	if err := file.Close(); err != nil {
 		return nil, err
 	}
 
 	files[path] = file.Name()
-
-	return file, nil
+	return fs.Open(file.Name())
 }
 
-func (f *Fixture) Packfile() *os.File {
+func (f *Fixture) Packfile() billy.File {
 	file, err := f.file(fmt.Sprintf("pack-%s.pack", f.PackfileHash))
 	if err != nil {
 		panic(err)
 	}
+
 	return file
 }
 
-func (f *Fixture) Idx() *os.File {
+func (f *Fixture) Idx() billy.File {
 	file, err := f.file(fmt.Sprintf("pack-%s.idx", f.PackfileHash))
 	if err != nil {
 		panic(err)
 	}
+
 	return file
 }
 
@@ -264,12 +263,12 @@ func (f *Fixture) DotGit() billy.Filesystem {
 		panic(err)
 	}
 
-	path, err := tgz.Extract(file.Name())
+	fs, err := tgz.Extract(fs, file.Name())
 	if err != nil {
 		panic(err)
 	}
 
-	return osfs.New(path)
+	return fs
 }
 
 // EnsureIsBare overrides the config file with one where bare is true.
@@ -304,12 +303,12 @@ func (f *Fixture) Worktree() billy.Filesystem {
 		panic(err)
 	}
 
-	path, err := tgz.Extract(file.Name())
+	fs, err := tgz.Extract(fs, file.Name())
 	if err != nil {
 		panic(err)
 	}
 
-	return osfs.New(path)
+	return fs
 }
 
 type Fixtures []*Fixture
@@ -360,7 +359,7 @@ func (g Fixtures) Exclude(tag string) Fixtures {
 // Clean cleans all the temporal files created
 func Clean() error {
 	for fname, f := range files {
-		if err := os.Remove(f); err != nil {
+		if err := fs.Remove(f); err != nil {
 			return err
 		}
 		delete(files, fname)
