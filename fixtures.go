@@ -15,8 +15,8 @@ import (
 //go:generate esc -o data.go -pkg=fixtures data
 
 var (
-	files = make(map[string]string)
-	fs    = osfs.New(os.TempDir())
+	files      = make(map[string]string)
+	Filesystem = osfs.New(os.TempDir())
 )
 
 var fixtures = Fixtures{{
@@ -207,7 +207,7 @@ func (f *Fixture) Is(tag string) bool {
 
 func (f *Fixture) file(path string) (billy.File, error) {
 	if fpath, ok := files[path]; ok {
-		return fs.Open(fpath)
+		return Filesystem.Open(fpath)
 	}
 
 	bytes, err := FSByte(false, "/data/"+path)
@@ -215,7 +215,7 @@ func (f *Fixture) file(path string) (billy.File, error) {
 		return nil, err
 	}
 
-	file, err := fs.TempFile("", "go-git-fixtures")
+	file, err := Filesystem.TempFile("", "go-git-fixtures")
 	if err != nil {
 		return nil, err
 	}
@@ -229,7 +229,7 @@ func (f *Fixture) file(path string) (billy.File, error) {
 	}
 
 	files[path] = file.Name()
-	return fs.Open(file.Name())
+	return Filesystem.Open(file.Name())
 }
 
 func (f *Fixture) Packfile() billy.File {
@@ -263,7 +263,7 @@ func (f *Fixture) DotGit() billy.Filesystem {
 		panic(err)
 	}
 
-	fs, err := tgz.Extract(fs, file.Name())
+	fs, err := tgz.Extract(Filesystem, file.Name())
 	if err != nil {
 		panic(err)
 	}
@@ -303,7 +303,7 @@ func (f *Fixture) Worktree() billy.Filesystem {
 		panic(err)
 	}
 
-	fs, err := tgz.Extract(fs, file.Name())
+	fs, err := tgz.Extract(Filesystem, file.Name())
 	if err != nil {
 		panic(err)
 	}
@@ -359,7 +359,7 @@ func (g Fixtures) Exclude(tag string) Fixtures {
 // Clean cleans all the temporal files created
 func Clean() error {
 	for fname, f := range files {
-		if err := fs.Remove(f); err != nil {
+		if err := Filesystem.Remove(f); err != nil {
 			return err
 		}
 		delete(files, fname)
