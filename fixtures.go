@@ -166,6 +166,9 @@ var fixtures = Fixtures{{
 }, {
 	Tags:         []string{"worktree", "main-branch", "no-master-head"},
 	WorktreeHash: "e3b91f99d8d050cac81d84fbef89172f58eeb745",
+}, {
+	Tags:         []string{"packfile", "codecommit"},
+	PackfileHash: "9733763ae7ee6efcf452d373d6fff77424fb1dcc",
 }}
 
 func All() Fixtures {
