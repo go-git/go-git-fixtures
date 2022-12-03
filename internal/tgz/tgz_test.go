@@ -3,13 +3,14 @@ package tgz
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"reflect"
 	"regexp"
 	"sort"
 	"testing"
 
+	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-billy/v5/util"
 )
 
 func TestExtractError(t *testing.T) {
@@ -29,7 +30,7 @@ func TestExtractError(t *testing.T) {
 		},
 	} {
 		com := fmt.Sprintf("%d) tgz path = %s", i, test.tgz)
-		path, err := Extract(osfs.New(""), test.tgz)
+		tmpFs, err := Extract(osfs.New(""), test.tgz)
 		if err == nil {
 			t.Errorf("%s: expect an error, but none was returned", com)
 		} else if errorNotMatch(err, test.errRgx) {
@@ -37,10 +38,13 @@ func TestExtractError(t *testing.T) {
 				com, err, test.errRgx)
 		}
 
-		if path != "" {
-			if err = os.RemoveAll(path); err != nil {
-				t.Fatalf("%s: cannot remove temp directory: %s", com, err)
-			}
+		if tmpFs == nil {
+			continue
+		}
+
+		err = util.RemoveAll(tmpFs, "")
+		if err != nil {
+			t.Fatalf("%s: unexpected error removing temporal path: %s", com, err)
 		}
 	}
 }
@@ -84,12 +88,11 @@ func TestExtract(t *testing.T) {
 	} {
 		com := fmt.Sprintf("%d) tgz path = %s", i, test.tgz)
 
-		path, err := Extract(osfs.New(""), test.tgz)
+		tmpFs, err := Extract(osfs.New(""), test.tgz)
 		if err != nil {
 			t.Fatalf("%s: unexpected error extracting: %s", test.tgz, err)
 		}
-
-		obt, err := relativeTree(path)
+		obt, err := relativeTree(tmpFs)
 		if err != nil {
 			t.Errorf("%s: unexpected error calculating relative path: %s", com, err)
 		}
@@ -99,7 +102,7 @@ func TestExtract(t *testing.T) {
 			t.Fatalf("%s:\n\tobtained: %v\n\t expected: %v", com, obt, test.tree)
 		}
 
-		err = os.RemoveAll(path)
+		err = util.RemoveAll(tmpFs, "")
 		if err != nil {
 			t.Fatalf("%s: unexpected error removing temporal path: %s", com, err)
 		}
@@ -108,30 +111,15 @@ func TestExtract(t *testing.T) {
 
 // relativeTree returns the list of relative paths to the files and
 // directories inside a given directory, recursively.
-func relativeTree(dir string) ([]string, error) {
-	dir = filepath.Clean(dir)
-
-	absPaths := []string{}
+func relativeTree(fs billy.Filesystem) ([]string, error) {
+	relPaths := []string{}
 	walkFn := func(path string, _ os.FileInfo, _ error) error {
-		absPaths = append(absPaths, path)
+		if path != "" {
+			relPaths = append(relPaths, path)
+		}
 		return nil
 	}
 
-	_ = filepath.Walk(dir, walkFn)
-
-	return toRelative(absPaths[1:], dir)
-}
-
-// toRelative returns the relative paths (form b) of the list of paths in l.
-func toRelative(l []string, b string) ([]string, error) {
-	r := []string{}
-	for _, p := range l {
-		rel, err := filepath.Rel(b, p)
-		if err != nil {
-			return nil, err
-		}
-		r = append(r, rel)
-	}
-
-	return r, nil
+	err := util.Walk(fs, "", walkFn)
+	return relPaths, err
 }
