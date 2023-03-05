@@ -169,6 +169,9 @@ var fixtures = Fixtures{{
 }, {
 	Tags:         []string{"packfile", "codecommit"},
 	PackfileHash: "9733763ae7ee6efcf452d373d6fff77424fb1dcc",
+}, {
+	Tags:         []string{"packfile", "delta-before-base"},
+	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
 }}
 
 func All() Fixtures {
