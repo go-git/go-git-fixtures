@@ -269,7 +269,7 @@ func (f *Fixture) DotGit() billy.Filesystem {
 		panic(err)
 	}
 
-	fs, err := tgz.Extract(Filesystem, file.Name())
+	fs, err, _ := tgz.Extract(Filesystem, file.Name())
 	if err != nil {
 		panic(err)
 	}
@@ -309,7 +309,7 @@ func (f *Fixture) Worktree() billy.Filesystem {
 		panic(err)
 	}
 
-	fs, err := tgz.Extract(Filesystem, file.Name())
+	fs, err, _ := tgz.Extract(Filesystem, file.Name())
 	if err != nil {
 		panic(err)
 	}
