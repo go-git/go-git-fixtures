@@ -29,18 +29,14 @@ func TestExtractError(t *testing.T) {
 		},
 	} {
 		com := fmt.Sprintf("%d) tgz path = %s", i, test.tgz)
-		path, err := Extract(osfs.New(""), test.tgz)
+		_, err, cleanup := Extract(osfs.New(""), test.tgz)
+		defer cleanup() // Clean up temporary dirs.
+
 		if err == nil {
 			t.Errorf("%s: expect an error, but none was returned", com)
 		} else if errorNotMatch(err, test.errRgx) {
 			t.Errorf("%s:\n\treceived error: %s\n\texpected regexp: %s\n",
 				com, err, test.errRgx)
-		}
-
-		if path != "" {
-			if err = os.RemoveAll(path); err != nil {
-				t.Fatalf("%s: cannot remove temp directory: %s", com, err)
-			}
 		}
 	}
 }
@@ -84,12 +80,14 @@ func TestExtract(t *testing.T) {
 	} {
 		com := fmt.Sprintf("%d) tgz path = %s", i, test.tgz)
 
-		path, err := Extract(osfs.New(""), test.tgz)
+		path, err, cleanup := Extract(osfs.New(""), test.tgz)
+		defer cleanup() // Clean up temporary dirs.
+
 		if err != nil {
 			t.Fatalf("%s: unexpected error extracting: %s", test.tgz, err)
 		}
 
-		obt, err := relativeTree(path)
+		obt, err := relativeTree(path.Root())
 		if err != nil {
 			t.Errorf("%s: unexpected error calculating relative path: %s", com, err)
 		}
@@ -97,11 +95,6 @@ func TestExtract(t *testing.T) {
 		sort.Strings(test.tree)
 		if !reflect.DeepEqual(obt, test.tree) {
 			t.Fatalf("%s:\n\tobtained: %v\n\t expected: %v", com, obt, test.tree)
-		}
-
-		err = os.RemoveAll(path)
-		if err != nil {
-			t.Fatalf("%s: unexpected error removing temporal path: %s", com, err)
 		}
 	}
 }

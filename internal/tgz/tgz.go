@@ -27,10 +27,17 @@ const (
 // before the error and the temporal directory has not been created.
 // Otherwise, a non-empty string with the temporal directory holding
 // whatever information was extracted before the error is returned.
-func Extract(fs billy.Filesystem, tgz string) (billy.Filesystem, error) {
+func Extract(fs billy.Filesystem, tgz string) (d billy.Filesystem, err error, cleanup func()) {
+	dirName := ""
+	cleanup = func() {
+		if dirName != "" {
+			_ = os.RemoveAll(dirName)
+		}
+	}
+
 	f, err := fs.Open(tgz)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	defer func() {
@@ -40,21 +47,22 @@ func Extract(fs billy.Filesystem, tgz string) (billy.Filesystem, error) {
 		}
 	}()
 
-	d, err := util.TempDir(fs, useDefaultTempDir, tmpPrefix)
+	dirName, err = util.TempDir(fs, useDefaultTempDir, tmpPrefix)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	tar, err := zipTarReader(f)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	if err = unTar(fs, tar, d); err != nil {
-		return nil, err
+	if err = unTar(fs, tar, dirName); err != nil {
+		return
 	}
 
-	return fs.Chroot(d)
+	d, err = fs.Chroot(dirName)
+	return
 }
 
 func zipTarReader(r io.Reader) (*tar.Reader, error) {
