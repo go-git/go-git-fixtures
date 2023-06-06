@@ -172,6 +172,10 @@ var fixtures = Fixtures{{
 }, {
 	Tags:         []string{"packfile", "delta-before-base"},
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
+}, {
+	Tags: []string{"packfile", "0.1.0"},
+	URL: "https://github.com/lonegunmanb/TestMergeRepo.git",
+	PackfileHash: "679977a1df79af241c66d8b3969d66ed8a4e3dfd",
 }}
 
 func All() Fixtures {
