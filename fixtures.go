@@ -161,6 +161,12 @@ var fixtures = Fixtures{{
 	DotGitHash:   "cf717ccadce761d60bb4a8557a7b9a2efd23816a",
 	ObjectsCount: 31,
 }, {
+	Tags:         []string{"commit-graph-chain"},
+	Head:         "b9d69064b190e7aedccf84731ca1d917871f8a1c",
+	PackfileHash: "769137af7784db501bca677fbd56fef8b52515b7",
+	DotGitHash:   "00a1fc100787506f842e55511994f08df2c2cd66",
+	ObjectsCount: 31,
+}, {
 	Tags:         []string{"worktree", "linked-worktree"},
 	WorktreeHash: "363d996b02d9c3b598f0176619f5c6a44a82480a",
 }, {
@@ -340,6 +346,7 @@ func (g Fixtures) ByTag(tag string) Fixtures {
 
 	return r
 }
+
 func (g Fixtures) ByURL(url string) Fixtures {
 	r := make(Fixtures, 0)
 	for _, f := range g {
