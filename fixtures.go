@@ -167,6 +167,11 @@ var fixtures = Fixtures{{
 	DotGitHash:   "00a1fc100787506f842e55511994f08df2c2cd66",
 	ObjectsCount: 31,
 }, {
+	Tags:         []string{"commit-graph-chain-2"},
+	Head:         "ec6f456c0e8c7058a29611429965aa05c190b54b",
+	PackfileHash: "06ede69e9eba9f1af36eeee184402dc3ad705cd7",
+	DotGitHash:   "77b6511a6e67c99162ebcecd2763a9a19a7ad429",
+}, {
 	Tags:         []string{"worktree", "linked-worktree"},
 	WorktreeHash: "363d996b02d9c3b598f0176619f5c6a44a82480a",
 }, {
