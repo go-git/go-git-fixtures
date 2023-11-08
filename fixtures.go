@@ -1,6 +1,7 @@
 package fixtures
 
 import (
+	"embed"
 	"fmt"
 	"io"
 	"os"
@@ -13,12 +14,13 @@ import (
 	"gopkg.in/check.v1"
 )
 
-//go:generate esc -o data.go -pkg=fixtures data
-
 var (
 	files      = make(map[string]string)
 	Filesystem = osfs.New(os.TempDir())
 )
+
+//go:embed data
+var data embed.FS
 
 var fixtures = Fixtures{{
 	Tags:         []string{"packfile", "ofs-delta", ".git", "root-reference"},
@@ -184,6 +186,9 @@ var fixtures = Fixtures{{
 }, {
 	Tags:         []string{"packfile", "delta-before-base"},
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
+}, {
+	Tags:         []string{"packfile", "pack-sha256"},
+	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
 }}
 
 func All() Fixtures {
@@ -228,7 +233,7 @@ func (f *Fixture) file(path string) (billy.File, error) {
 		return Filesystem.Open(fpath)
 	}
 
-	bytes, err := FSByte(false, "/data/"+path)
+	bytes, err := data.ReadFile("data/" + path)
 	if err != nil {
 		return nil, err
 	}
@@ -261,6 +266,15 @@ func (f *Fixture) Packfile() billy.File {
 
 func (f *Fixture) Idx() billy.File {
 	file, err := f.file(fmt.Sprintf("pack-%s.idx", f.PackfileHash))
+	if err != nil {
+		panic(err)
+	}
+
+	return file
+}
+
+func (f *Fixture) Rev() billy.File {
+	file, err := f.file(fmt.Sprintf("pack-%s.rev", f.PackfileHash))
 	if err != nil {
 		panic(err)
 	}
