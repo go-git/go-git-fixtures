@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"testing"
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
@@ -330,10 +331,22 @@ func (f *Fixture) Worktree() billy.Filesystem {
 
 type Fixtures []*Fixture
 
+// Deprecated as part of removing check from the code base.
+// Use Run instead.
 func (g Fixtures) Test(c *check.C, test func(*Fixture)) {
 	for _, f := range g {
 		c.Logf("executing test at %s %s", f.URL, f.Tags)
 		test(f)
+	}
+}
+
+// Run calls test within a t.Run for each fixture in g.
+func (g Fixtures) Run(t *testing.T, test func(*testing.T, *Fixture)) {
+	for _, f := range g {
+		name := fmt.Sprintf("fixture run (%q, %q)", f.URL, f.Tags)
+		t.Run(name, func(t *testing.T) {
+			test(t, f)
+		})
 	}
 }
 
@@ -387,6 +400,7 @@ func Clean() error {
 
 type Suite struct{}
 
+// Deprecated as part of removing check from the code base.
 func (s *Suite) TearDownSuite(c *check.C) {
 	Clean()
 }
