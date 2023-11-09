@@ -1,10 +1,12 @@
 package fixtures
 
 import (
+	"embed"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+	"testing"
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
@@ -12,12 +14,13 @@ import (
 	"gopkg.in/check.v1"
 )
 
-//go:generate esc -o data.go -pkg=fixtures data
-
 var (
 	files      = make(map[string]string)
 	Filesystem = osfs.New(os.TempDir())
 )
+
+//go:embed data
+var data embed.FS
 
 var fixtures = Fixtures{{
 	Tags:         []string{"packfile", "ofs-delta", ".git", "root-reference"},
@@ -183,6 +186,9 @@ var fixtures = Fixtures{{
 }, {
 	Tags:         []string{"packfile", "delta-before-base"},
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
+}, {
+	Tags:         []string{"packfile", "pack-sha256"},
+	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
 }}
 
 func All() Fixtures {
@@ -227,7 +233,7 @@ func (f *Fixture) file(path string) (billy.File, error) {
 		return Filesystem.Open(fpath)
 	}
 
-	bytes, err := FSByte(false, "/data/"+path)
+	bytes, err := data.ReadFile("data/" + path)
 	if err != nil {
 		return nil, err
 	}
@@ -260,6 +266,15 @@ func (f *Fixture) Packfile() billy.File {
 
 func (f *Fixture) Idx() billy.File {
 	file, err := f.file(fmt.Sprintf("pack-%s.idx", f.PackfileHash))
+	if err != nil {
+		panic(err)
+	}
+
+	return file
+}
+
+func (f *Fixture) Rev() billy.File {
+	file, err := f.file(fmt.Sprintf("pack-%s.rev", f.PackfileHash))
 	if err != nil {
 		panic(err)
 	}
@@ -330,10 +345,22 @@ func (f *Fixture) Worktree() billy.Filesystem {
 
 type Fixtures []*Fixture
 
+// Deprecated as part of removing check from the code base.
+// Use Run instead.
 func (g Fixtures) Test(c *check.C, test func(*Fixture)) {
 	for _, f := range g {
 		c.Logf("executing test at %s %s", f.URL, f.Tags)
 		test(f)
+	}
+}
+
+// Run calls test within a t.Run for each fixture in g.
+func (g Fixtures) Run(t *testing.T, test func(*testing.T, *Fixture)) {
+	for _, f := range g {
+		name := fmt.Sprintf("fixture run (%q, %q)", f.URL, f.Tags)
+		t.Run(name, func(t *testing.T) {
+			test(t, f)
+		})
 	}
 }
 
@@ -387,6 +414,7 @@ func Clean() error {
 
 type Suite struct{}
 
+// Deprecated as part of removing check from the code base.
 func (s *Suite) TearDownSuite(c *check.C) {
 	Clean()
 }

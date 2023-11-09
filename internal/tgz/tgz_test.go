@@ -19,12 +19,12 @@ func TestExtractError(t *testing.T) {
 	}{
 		{
 			tgz:    "not-found",
-			errRgx: regexp.MustCompile("open not-found: no such file .*"),
+			errRgx: regexp.MustCompile("open not-found: (The system cannot find the file specified|no such file).*"),
 		}, {
-			tgz:    "fixtures/invalid-gzip.tgz",
+			tgz:    filepath.Join("fixtures", "invalid-gzip.tgz"),
 			errRgx: regexp.MustCompile("gzip: invalid header"),
 		}, {
-			tgz:    "fixtures/not-a-tar.tgz",
+			tgz:    filepath.Join("fixtures", "not-a-tar.tgz"),
 			errRgx: regexp.MustCompile("unexpected EOF"),
 		},
 	} {
@@ -51,29 +51,29 @@ func TestExtract(t *testing.T) {
 		tree []string
 	}{
 		{
-			tgz: "fixtures/test-01.tgz",
+			tgz: filepath.Join("fixtures", "test-01.tgz"),
 			tree: []string{
 				"foo.txt",
 			},
 		}, {
-			tgz: "fixtures/test-02.tgz",
+			tgz: filepath.Join("fixtures", "test-02.tgz"),
 			tree: []string{
 				"baz.txt",
 				"bla.txt",
 				"foo.txt",
 			},
 		}, {
-			tgz: "fixtures/test-03.tgz",
+			tgz: filepath.Join("fixtures", "test-03.tgz"),
 			tree: []string{
 				"bar",
-				"bar/baz.txt",
-				"bar/foo.txt",
+				filepath.Join("bar", "baz.txt"),
+				filepath.Join("bar", "foo.txt"),
 				"baz",
-				"baz/bar",
-				"baz/bar/foo.txt",
-				"baz/baz",
-				"baz/baz/baz",
-				"baz/baz/baz/foo.txt",
+				filepath.Join("baz", "bar"),
+				filepath.Join("baz", "bar", "foo.txt"),
+				filepath.Join("baz", "baz"),
+				filepath.Join("baz", "baz", "baz"),
+				filepath.Join("baz", "baz", "baz", "foo.txt"),
 				"foo.txt",
 			},
 		},
