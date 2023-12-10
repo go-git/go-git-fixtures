@@ -189,6 +189,9 @@ var fixtures = Fixtures{{
 }, {
 	Tags:         []string{"packfile-sha256"},
 	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
+}, {
+	Tags:         []string{"packfile", "notes"},
+	PackfileHash: "bc4b855a55cae7703c023d4e36e3a7c9f5d84491",
 }}
 
 func All() Fixtures {
