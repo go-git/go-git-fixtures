@@ -40,7 +40,7 @@ func TestEmbeddedFiles(t *testing.T) {
 }
 
 func TestRevFiles(t *testing.T) {
-	f := ByTag("pack-sha256").One()
+	f := ByTag("packfile-sha256").One()
 
 	if f.Rev() == nil {
 		assert.Fail(t, "failed to get rev file")

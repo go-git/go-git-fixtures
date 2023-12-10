@@ -187,7 +187,7 @@ var fixtures = Fixtures{{
 	Tags:         []string{"packfile", "delta-before-base"},
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
 }, {
-	Tags:         []string{"packfile", "pack-sha256"},
+	Tags:         []string{"packfile-sha256"},
 	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
 }}
 
