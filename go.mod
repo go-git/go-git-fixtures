@@ -5,7 +5,7 @@ go 1.19
 
 require (
 	github.com/go-git/go-billy/v5 v5.5.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
 
