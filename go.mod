@@ -1,7 +1,7 @@
 module github.com/go-git/go-git-fixtures/v4
 
 // go-git supports the last 3 stable Go versions.
-go 1.19
+go 1.20
 
 require (
 	github.com/go-git/go-billy/v5 v5.5.0
