@@ -1,0 +1,208 @@
+// embedfs exposes an embed.FS as a read-only billy.Filesystem.
+package embedfs
+
+import (
+	"bytes"
+	"embed"
+	"fmt"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"sync"
+
+	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v5/helper/chroot"
+	"github.com/go-git/go-billy/v5/memfs"
+)
+
+type Embed struct {
+	underlying *embed.FS
+}
+
+func New(efs *embed.FS, path string) billy.Filesystem {
+	fs := &Embed{
+		underlying: efs,
+	}
+
+	if efs == nil {
+		fs.underlying = &embed.FS{}
+	}
+
+	return chroot.New(fs, path)
+}
+
+func (fs *Embed) Stat(filename string) (os.FileInfo, error) {
+	f, err := fs.underlying.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	return f.Stat()
+}
+
+func (fs *Embed) Open(filename string) (billy.File, error) {
+	return fs.OpenFile(filename, os.O_RDONLY, 0)
+}
+
+func (fs *Embed) OpenFile(filename string, flag int, perm os.FileMode) (billy.File, error) {
+	if flag&(os.O_CREATE|os.O_WRONLY|os.O_APPEND|os.O_RDWR|os.O_EXCL|os.O_TRUNC) != 0 {
+		return nil, billy.ErrReadOnly
+	}
+
+	f, err := fs.underlying.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	fi, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	if fi.IsDir() {
+		return nil, fmt.Errorf("cannot open directory: %s", filename)
+	}
+
+	data, err := fs.underlying.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	// Only load the bytes to memory if the files is needed.
+	lazyFunc := func() *bytes.Reader { return bytes.NewReader(data) }
+	return toFile(lazyFunc, fi), nil
+}
+
+// TODO: use memfs instead
+func (fs *Embed) Join(elem ...string) string {
+	// Function adapted from Go's filepath.Join for unix:
+	// https://github.com/golang/go/blob/1ed85ee228023d766b37db056311929c00091c9f/src/path/filepath/path_unix.go#L45
+	for i, el := range elem {
+		if el != "" {
+			// reuses filepath.Clean, as it is OS agnostic.
+			return filepath.Clean(strings.Join(elem[i:], "/"))
+		}
+	}
+	return ""
+}
+
+func (fs *Embed) ReadDir(path string) ([]os.FileInfo, error) {
+	e, err := fs.underlying.ReadDir(path)
+	if err != nil {
+		return nil, err
+	}
+
+	var entries []os.FileInfo
+	for _, f := range e {
+		fi, _ := f.Info()
+		entries = append(entries, fi)
+	}
+
+	sort.Sort(memfs.ByName(entries))
+
+	return entries, nil
+}
+
+// Create is not supported.
+//
+// Calls will always return billy.ErrReadOnly.
+func (fs *Embed) Create(filename string) (billy.File, error) {
+	return nil, billy.ErrReadOnly
+}
+
+// Rename is not supported.
+//
+// Calls will always return billy.ErrReadOnly.
+func (fs *Embed) Rename(from, to string) error {
+	return billy.ErrReadOnly
+}
+
+// Remove is not supported.
+//
+// Calls will always return billy.ErrReadOnly.
+func (fs *Embed) Remove(filename string) error {
+	return billy.ErrReadOnly
+}
+
+// MkdirAll is not supported.
+//
+// Calls will always return billy.ErrReadOnly.
+func (fs *Embed) MkdirAll(filename string, perm os.FileMode) error {
+	return billy.ErrReadOnly
+}
+
+func toFile(lazy func() *bytes.Reader, fi fs.FileInfo) billy.File {
+	new := &file{
+		lazy: lazy,
+		fi:   fi,
+	}
+
+	return new
+}
+
+type file struct {
+	lazy   func() *bytes.Reader
+	reader *bytes.Reader
+	fi     fs.FileInfo
+	once   sync.Once
+}
+
+func (f *file) loadReader() {
+	f.reader = f.lazy()
+}
+
+func (f *file) Name() string {
+	return f.fi.Name()
+}
+
+func (f *file) Read(b []byte) (int, error) {
+	f.once.Do(f.loadReader)
+
+	return f.reader.Read(b)
+}
+
+func (f *file) ReadAt(b []byte, off int64) (int, error) {
+	f.once.Do(f.loadReader)
+
+	return f.reader.ReadAt(b, off)
+}
+
+func (f *file) Seek(offset int64, whence int) (int64, error) {
+	f.once.Do(f.loadReader)
+
+	return f.reader.Seek(offset, whence)
+}
+
+func (f *file) Stat() (os.FileInfo, error) {
+	return f.fi, nil
+}
+
+// Close for embedfs file is a no-op.
+func (f *file) Close() error {
+	return nil
+}
+
+// Lock for embedfs file is a no-op.
+func (f *file) Lock() error {
+	return nil
+}
+
+// Unlock for embedfs file is a no-op.
+func (f *file) Unlock() error {
+	return nil
+}
+
+// Truncate is not supported.
+//
+// Calls will always return billy.ErrReadOnly.
+func (f *file) Truncate(size int64) error {
+	return billy.ErrReadOnly
+}
+
+// Write is not supported.
+//
+// Calls will always return billy.ErrReadOnly.
+func (f *file) Write(p []byte) (int, error) {
+	return 0, billy.ErrReadOnly
+}
