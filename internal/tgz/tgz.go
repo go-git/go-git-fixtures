@@ -8,60 +8,45 @@ import (
 	"os"
 
 	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/util"
+	"github.com/go-git/go-billy/v5/memfs"
 )
 
-const (
-	useDefaultTempDir = ""
-	tmpPrefix         = "tmp-tgz-"
-)
+var MemFactory = func() (billy.Filesystem, error) {
+	return memfs.New(), nil
+}
 
-// Extract decompress a gziped tarball into a new temporal directory
-// created just for this purpose.
+// Extract decompress a gziped tarball into a billy Filesystem.
 //
 // On success, the path of the newly created directory and a nil error
 // is returned.
 //
 // A non-nil error is returned if the method fails to complete. The
-// returned path will be an empty string if no information was extracted
-// before the error and the temporal directory has not been created.
+// returned path will be an empty string if no information was extracted.
 // Otherwise, a non-empty string with the temporal directory holding
 // whatever information was extracted before the error is returned.
-func Extract(fs billy.Filesystem, tgz string) (d billy.Filesystem, err error, cleanup func()) {
-	dirName := ""
-	cleanup = func() {
-		if dirName != "" {
-			_ = os.RemoveAll(dirName)
-		}
-	}
-
-	f, err := fs.Open(tgz)
-	if err != nil {
-		return
-	}
-
+func Extract(tgz billy.File, newFS func() (billy.Filesystem, error)) (fs billy.Filesystem, err error) {
 	defer func() {
-		errClose := f.Close()
+		errClose := tgz.Close()
 		if err == nil {
 			err = errClose
 		}
 	}()
 
-	dirName, err = util.TempDir(fs, useDefaultTempDir, tmpPrefix)
+	tar, err := zipTarReader(tgz)
 	if err != nil {
 		return
 	}
 
-	tar, err := zipTarReader(f)
+	fs, err = newFS()
 	if err != nil {
 		return
 	}
 
-	if err = unTar(fs, tar, dirName); err != nil {
+	err = unTar(fs, tar)
+	if err != nil {
 		return
 	}
 
-	d, err = fs.Chroot(dirName)
 	return
 }
 
@@ -74,7 +59,7 @@ func zipTarReader(r io.Reader) (*tar.Reader, error) {
 	return tar.NewReader(zip), nil
 }
 
-func unTar(fs billy.Filesystem, src *tar.Reader, dstPath string) error {
+func unTar(fs billy.Filesystem, src *tar.Reader) error {
 	for {
 		header, err := src.Next()
 		if err != nil {
@@ -84,7 +69,7 @@ func unTar(fs billy.Filesystem, src *tar.Reader, dstPath string) error {
 			return err
 		}
 
-		dst := dstPath + "/" + header.Name
+		dst := header.Name
 		mode := os.FileMode(header.Mode)
 		switch header.Typeflag {
 		case tar.TypeDir:
@@ -98,7 +83,7 @@ func unTar(fs billy.Filesystem, src *tar.Reader, dstPath string) error {
 				return err
 			}
 		default:
-			return fmt.Errorf("Unable to untar type : %c in file %s",
+			return fmt.Errorf("unable to untar type: %c in file %s",
 				header.Typeflag, header.Name)
 		}
 	}

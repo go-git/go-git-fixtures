@@ -9,15 +9,11 @@ import (
 	"testing"
 
 	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-git-fixtures/v4/internal/embedfs"
 	"github.com/go-git/go-git-fixtures/v4/internal/tgz"
-	"gopkg.in/check.v1"
 )
 
-var (
-	files      = make(map[string]string)
-	Filesystem = osfs.New(os.TempDir())
-)
+var Filesystem = embedfs.New(&data)
 
 //go:embed data
 var data embed.FS
@@ -231,35 +227,8 @@ func (f *Fixture) Is(tag string) bool {
 	return false
 }
 
-func (f *Fixture) file(path string) (billy.File, error) {
-	if fpath, ok := files[path]; ok {
-		return Filesystem.Open(fpath)
-	}
-
-	bytes, err := data.ReadFile("data/" + path)
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := Filesystem.TempFile("", "go-git-fixtures")
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := file.Write(bytes); err != nil {
-		return nil, err
-	}
-
-	if err := file.Close(); err != nil {
-		return nil, err
-	}
-
-	files[path] = file.Name()
-	return Filesystem.Open(file.Name())
-}
-
 func (f *Fixture) Packfile() billy.File {
-	file, err := f.file(fmt.Sprintf("pack-%s.pack", f.PackfileHash))
+	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.pack", f.PackfileHash))
 	if err != nil {
 		panic(err)
 	}
@@ -268,7 +237,7 @@ func (f *Fixture) Packfile() billy.File {
 }
 
 func (f *Fixture) Idx() billy.File {
-	file, err := f.file(fmt.Sprintf("pack-%s.idx", f.PackfileHash))
+	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.idx", f.PackfileHash))
 	if err != nil {
 		panic(err)
 	}
@@ -277,7 +246,7 @@ func (f *Fixture) Idx() billy.File {
 }
 
 func (f *Fixture) Rev() billy.File {
-	file, err := f.file(fmt.Sprintf("pack-%s.rev", f.PackfileHash))
+	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.rev", f.PackfileHash))
 	if err != nil {
 		panic(err)
 	}
@@ -287,18 +256,23 @@ func (f *Fixture) Rev() billy.File {
 
 // DotGit creates a new temporary directory and unpacks the repository .git
 // directory into it. Multiple calls to DotGit returns different directories.
-func (f *Fixture) DotGit() billy.Filesystem {
+func (f *Fixture) DotGit(opts ...Option) billy.Filesystem {
+	o := newOptions()
+	for _, opt := range opts {
+		opt(o)
+	}
+
 	if f.DotGitHash == "" && f.WorktreeHash != "" {
-		fs, _ := f.Worktree().Chroot(".git")
+		fs, _ := f.Worktree(opts...).Chroot(".git")
 		return fs.(billy.Filesystem)
 	}
 
-	file, err := f.file(fmt.Sprintf("git-%s.tgz", f.DotGitHash))
+	file, err := Filesystem.Open(fmt.Sprintf("data/git-%s.tgz", f.DotGitHash))
 	if err != nil {
 		panic(err)
 	}
 
-	fs, err, _ := tgz.Extract(Filesystem, file.Name())
+	fs, err := tgz.Extract(file, o.fsFactory)
 	if err != nil {
 		panic(err)
 	}
@@ -332,13 +306,18 @@ func EnsureIsBare(fs billy.Filesystem) error {
 	return err
 }
 
-func (f *Fixture) Worktree() billy.Filesystem {
-	file, err := f.file(fmt.Sprintf("worktree-%s.tgz", f.WorktreeHash))
+func (f *Fixture) Worktree(opts ...Option) billy.Filesystem {
+	o := newOptions()
+	for _, opt := range opts {
+		opt(o)
+	}
+
+	file, err := Filesystem.Open(fmt.Sprintf("data/worktree-%s.tgz", f.WorktreeHash))
 	if err != nil {
 		panic(err)
 	}
 
-	fs, err, _ := tgz.Extract(Filesystem, file.Name())
+	fs, err := tgz.Extract(file, o.fsFactory)
 	if err != nil {
 		panic(err)
 	}
@@ -347,15 +326,6 @@ func (f *Fixture) Worktree() billy.Filesystem {
 }
 
 type Fixtures []*Fixture
-
-// Deprecated as part of removing check from the code base.
-// Use Run instead.
-func (g Fixtures) Test(c *check.C, test func(*Fixture)) {
-	for _, f := range g {
-		c.Logf("executing test at %s %s", f.URL, f.Tags)
-		test(f)
-	}
-}
 
 // Run calls test within a t.Run for each fixture in g.
 func (g Fixtures) Run(t *testing.T, test func(*testing.T, *Fixture)) {
@@ -368,11 +338,14 @@ func (g Fixtures) Run(t *testing.T, test func(*testing.T, *Fixture)) {
 }
 
 func (g Fixtures) One() *Fixture {
+	if len(g) == 0 {
+		return nil
+	}
 	return g[0]
 }
 
 func (g Fixtures) ByTag(tag string) Fixtures {
-	r := make(Fixtures, 0)
+	r := make(Fixtures, 0, len(g))
 	for _, f := range g {
 		if f.Is(tag) {
 			r = append(r, f)
@@ -383,7 +356,7 @@ func (g Fixtures) ByTag(tag string) Fixtures {
 }
 
 func (g Fixtures) ByURL(url string) Fixtures {
-	r := make(Fixtures, 0)
+	r := make(Fixtures, 0, len(g))
 	for _, f := range g {
 		if f.URL == url {
 			r = append(r, f)
@@ -394,7 +367,7 @@ func (g Fixtures) ByURL(url string) Fixtures {
 }
 
 func (g Fixtures) Exclude(tag string) Fixtures {
-	r := make(Fixtures, 0)
+	r := make(Fixtures, 0, len(g))
 	for _, f := range g {
 		if !f.Is(tag) {
 			r = append(r, f)
@@ -402,22 +375,4 @@ func (g Fixtures) Exclude(tag string) Fixtures {
 	}
 
 	return r
-}
-
-// Clean cleans all the temporal files created
-func Clean() error {
-	for fname, f := range files {
-		if err := Filesystem.Remove(f); err != nil {
-			return err
-		}
-		delete(files, fname)
-	}
-	return nil
-}
-
-type Suite struct{}
-
-// Deprecated as part of removing check from the code base.
-func (s *Suite) TearDownSuite(c *check.C) {
-	Clean()
 }

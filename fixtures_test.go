@@ -7,8 +7,13 @@ import (
 )
 
 func TestDotGit(t *testing.T) {
-	fs := Basic().One().DotGit()
+	fs := Basic().One().DotGit(WithTargetDir(t.TempDir))
 	files, err := fs.ReadDir("/")
+	assert.NoError(t, err)
+	assert.True(t, len(files) > 1)
+
+	fs = Basic().One().DotGit(WithMemFS())
+	files, err = fs.ReadDir("/")
 	assert.NoError(t, err)
 	assert.True(t, len(files) > 1)
 }
@@ -26,14 +31,22 @@ func TestEmbeddedFiles(t *testing.T) {
 		}
 
 		if f.WorktreeHash != "" {
-			if f.Worktree() == nil {
-				assert.Fail(t, "failed to get worktree", i)
+			if f.Worktree(WithMemFS()) == nil {
+				assert.Fail(t, "[mem] failed to get worktree", i)
+			}
+
+			if f.Worktree(WithTargetDir(t.TempDir)) == nil {
+				assert.Fail(t, "[tempdir] failed to get worktree", i)
 			}
 		}
 
 		if f.DotGitHash != "" {
-			if f.DotGit() == nil {
-				assert.Fail(t, "failed to get dotgit", i)
+			if f.DotGit(WithMemFS()) == nil {
+				assert.Fail(t, "[mem] failed to get dotgit", i)
+			}
+
+			if f.DotGit(WithTargetDir(t.TempDir)) == nil {
+				assert.Fail(t, "[tempdir] failed to get dotgit", i)
 			}
 		}
 	}
@@ -42,7 +55,6 @@ func TestEmbeddedFiles(t *testing.T) {
 func TestRevFiles(t *testing.T) {
 	f := ByTag("packfile-sha256").One()
 
-	if f.Rev() == nil {
-		assert.Fail(t, "failed to get rev file")
-	}
+	assert.NotNil(t, f)
+	assert.NotNil(t, f.Rev(), "failed to get rev file")
 }

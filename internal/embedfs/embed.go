@@ -13,7 +13,6 @@ import (
 	"sync"
 
 	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/helper/chroot"
 	"github.com/go-git/go-billy/v5/memfs"
 )
 
@@ -21,7 +20,7 @@ type Embed struct {
 	underlying *embed.FS
 }
 
-func New(efs *embed.FS, path string) billy.Filesystem {
+func New(efs *embed.FS) billy.Filesystem {
 	fs := &Embed{
 		underlying: efs,
 	}
@@ -30,7 +29,11 @@ func New(efs *embed.FS, path string) billy.Filesystem {
 		fs.underlying = &embed.FS{}
 	}
 
-	return chroot.New(fs, path)
+	return fs
+}
+
+func (fs *Embed) Root() string {
+	return ""
 }
 
 func (fs *Embed) Stat(filename string) (os.FileInfo, error) {
@@ -74,14 +77,14 @@ func (fs *Embed) OpenFile(filename string, flag int, perm os.FileMode) (billy.Fi
 	return toFile(lazyFunc, fi), nil
 }
 
-// TODO: use memfs instead
+// Join return a path with all elements joined by forward slashes.
+//
+// This behaviour is OS-agnostic.
 func (fs *Embed) Join(elem ...string) string {
-	// Function adapted from Go's filepath.Join for unix:
-	// https://github.com/golang/go/blob/1ed85ee228023d766b37db056311929c00091c9f/src/path/filepath/path_unix.go#L45
 	for i, el := range elem {
 		if el != "" {
-			// reuses filepath.Clean, as it is OS agnostic.
-			return filepath.Clean(strings.Join(elem[i:], "/"))
+			clean := filepath.Clean(strings.Join(elem[i:], "/"))
+			return filepath.ToSlash(clean)
 		}
 	}
 	return ""
@@ -102,6 +105,41 @@ func (fs *Embed) ReadDir(path string) ([]os.FileInfo, error) {
 	sort.Sort(memfs.ByName(entries))
 
 	return entries, nil
+}
+
+// Chroot is not supported.
+//
+// Calls will always return billy.ErrNotSupported.
+func (fs *Embed) Chroot(path string) (billy.Filesystem, error) {
+	return nil, billy.ErrNotSupported
+}
+
+// Lstat is not supported.
+//
+// Calls will always return billy.ErrNotSupported.
+func (fs *Embed) Lstat(_ string) (os.FileInfo, error) {
+	return nil, billy.ErrNotSupported
+}
+
+// Readlink is not supported.
+//
+// Calls will always return billy.ErrNotSupported.
+func (fs *Embed) Readlink(_ string) (string, error) {
+	return "", billy.ErrNotSupported
+}
+
+// TempFile is not supported.
+//
+// Calls will always return billy.ErrNotSupported.
+func (fs *Embed) TempFile(_, _ string) (billy.File, error) {
+	return nil, billy.ErrNotSupported
+}
+
+// Symlink is not supported.
+//
+// Calls will always return billy.ErrReadOnly.
+func (fs *Embed) Symlink(_, _ string) error {
+	return billy.ErrReadOnly
 }
 
 // Create is not supported.
