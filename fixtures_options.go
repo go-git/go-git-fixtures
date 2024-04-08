@@ -3,7 +3,7 @@ package fixtures
 import (
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
-	"github.com/go-git/go-git-fixtures/v4/internal/tgz"
+	"github.com/go-git/go-git-fixtures/v5/internal/tgz"
 )
 
 const (

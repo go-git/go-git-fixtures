@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-git-fixtures/v4/internal/embedfs"
-	"github.com/go-git/go-git-fixtures/v4/internal/tgz"
+	"github.com/go-git/go-git-fixtures/v5/internal/embedfs"
+	"github.com/go-git/go-git-fixtures/v5/internal/tgz"
 )
 
 var Filesystem = embedfs.New(&data)
