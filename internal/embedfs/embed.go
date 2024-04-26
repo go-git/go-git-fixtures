@@ -48,7 +48,7 @@ func (fs *Embed) Open(filename string) (billy.File, error) {
 	return fs.OpenFile(filename, os.O_RDONLY, 0)
 }
 
-func (fs *Embed) OpenFile(filename string, flag int, perm os.FileMode) (billy.File, error) {
+func (fs *Embed) OpenFile(filename string, flag int, _ os.FileMode) (billy.File, error) {
 	if flag&(os.O_CREATE|os.O_WRONLY|os.O_APPEND|os.O_RDWR|os.O_EXCL|os.O_TRUNC) != 0 {
 		return nil, billy.ErrReadOnly
 	}
@@ -96,7 +96,7 @@ func (fs *Embed) ReadDir(path string) ([]os.FileInfo, error) {
 		return nil, err
 	}
 
-	var entries []os.FileInfo
+	entries := make([]os.FileInfo, 0, len(e))
 	for _, f := range e {
 		fi, _ := f.Info()
 		entries = append(entries, fi)
@@ -110,7 +110,7 @@ func (fs *Embed) ReadDir(path string) ([]os.FileInfo, error) {
 // Chroot is not supported.
 //
 // Calls will always return billy.ErrNotSupported.
-func (fs *Embed) Chroot(path string) (billy.Filesystem, error) {
+func (fs *Embed) Chroot(_ string) (billy.Filesystem, error) {
 	return nil, billy.ErrNotSupported
 }
 
@@ -145,38 +145,36 @@ func (fs *Embed) Symlink(_, _ string) error {
 // Create is not supported.
 //
 // Calls will always return billy.ErrReadOnly.
-func (fs *Embed) Create(filename string) (billy.File, error) {
+func (fs *Embed) Create(_ string) (billy.File, error) {
 	return nil, billy.ErrReadOnly
 }
 
 // Rename is not supported.
 //
 // Calls will always return billy.ErrReadOnly.
-func (fs *Embed) Rename(from, to string) error {
+func (fs *Embed) Rename(_, _ string) error {
 	return billy.ErrReadOnly
 }
 
 // Remove is not supported.
 //
 // Calls will always return billy.ErrReadOnly.
-func (fs *Embed) Remove(filename string) error {
+func (fs *Embed) Remove(_ string) error {
 	return billy.ErrReadOnly
 }
 
 // MkdirAll is not supported.
 //
 // Calls will always return billy.ErrReadOnly.
-func (fs *Embed) MkdirAll(filename string, perm os.FileMode) error {
+func (fs *Embed) MkdirAll(_ string, _ os.FileMode) error {
 	return billy.ErrReadOnly
 }
 
 func toFile(lazy func() *bytes.Reader, fi fs.FileInfo) billy.File {
-	new := &file{
+	return &file{
 		lazy: lazy,
 		fi:   fi,
 	}
-
-	return new
 }
 
 type file struct {
@@ -234,13 +232,13 @@ func (f *file) Unlock() error {
 // Truncate is not supported.
 //
 // Calls will always return billy.ErrReadOnly.
-func (f *file) Truncate(size int64) error {
+func (f *file) Truncate(_ int64) error {
 	return billy.ErrReadOnly
 }
 
 // Write is not supported.
 //
 // Calls will always return billy.ErrReadOnly.
-func (f *file) Write(p []byte) (int, error) {
+func (f *file) Write(_ []byte) (int, error) {
 	return 0, billy.ErrReadOnly
 }

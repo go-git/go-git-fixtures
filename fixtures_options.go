@@ -6,11 +6,6 @@ import (
 	"github.com/go-git/go-git-fixtures/v5/internal/tgz"
 )
 
-const (
-	useDefaultTempDir = ""
-	tmpPrefix         = "tmp-tgz-"
-)
-
 type Option func(*options)
 
 type options struct {

@@ -264,7 +264,7 @@ func (f *Fixture) DotGit(opts ...Option) billy.Filesystem {
 
 	if f.DotGitHash == "" && f.WorktreeHash != "" {
 		fs, _ := f.Worktree(opts...).Chroot(".git")
-		return fs.(billy.Filesystem)
+		return fs
 	}
 
 	file, err := Filesystem.Open(fmt.Sprintf("data/git-%s.tgz", f.DotGitHash))
@@ -329,6 +329,7 @@ type Fixtures []*Fixture
 
 // Run calls test within a t.Run for each fixture in g.
 func (g Fixtures) Run(t *testing.T, test func(*testing.T, *Fixture)) {
+	t.Helper()
 	for _, f := range g {
 		name := fmt.Sprintf("fixture run (%q, %q)", f.URL, f.Tags)
 		t.Run(name, func(t *testing.T) {

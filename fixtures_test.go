@@ -4,21 +4,26 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDotGit(t *testing.T) {
+	t.Parallel()
+
 	fs := Basic().One().DotGit(WithTargetDir(t.TempDir))
 	files, err := fs.ReadDir("/")
-	assert.NoError(t, err)
-	assert.True(t, len(files) > 1)
+	require.NoError(t, err)
+	assert.Greater(t, len(files), 1)
 
 	fs = Basic().One().DotGit(WithMemFS())
 	files, err = fs.ReadDir("/")
-	assert.NoError(t, err)
-	assert.True(t, len(files) > 1)
+	require.NoError(t, err)
+	assert.Greater(t, len(files), 1)
 }
 
 func TestEmbeddedFiles(t *testing.T) {
+	t.Parallel()
+
 	for i, f := range fixtures {
 		if f.PackfileHash != "" {
 			if f.Packfile() == nil {
@@ -53,6 +58,8 @@ func TestEmbeddedFiles(t *testing.T) {
 }
 
 func TestRevFiles(t *testing.T) {
+	t.Parallel()
+
 	f := ByTag("packfile-sha256").One()
 
 	assert.NotNil(t, f)
