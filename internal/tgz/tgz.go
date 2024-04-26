@@ -15,16 +15,10 @@ var MemFactory = func() (billy.Filesystem, error) {
 	return memfs.New(), nil
 }
 
-// Extract decompress a gziped tarball into a billy Filesystem.
+// Extract decompress a gziped tarball into the fs billy.Filesystem.
 //
-// On success, the path of the newly created directory and a nil error
-// is returned.
-//
-// A non-nil error is returned if the method fails to complete. The
-// returned path will be an empty string if no information was extracted.
-// Otherwise, a non-empty string with the temporal directory holding
-// whatever information was extracted before the error is returned.
-func Extract(tgz billy.File, newFS func() (billy.Filesystem, error)) (fs billy.Filesystem, err error) {
+// A non-nil error is returned if the method fails to complete.
+func Extract(tgz billy.File, fs billy.Filesystem) (err error) {
 	defer func() {
 		errClose := tgz.Close()
 		if err == nil {
@@ -33,11 +27,6 @@ func Extract(tgz billy.File, newFS func() (billy.Filesystem, error)) (fs billy.F
 	}()
 
 	tar, err := zipTarReader(tgz)
-	if err != nil {
-		return
-	}
-
-	fs, err = newFS()
 	if err != nil {
 		return
 	}

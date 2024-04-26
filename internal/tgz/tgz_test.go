@@ -43,7 +43,12 @@ func TestExtractError(t *testing.T) {
 			if tc.notFound {
 				require.ErrorIs(t, err, os.ErrNotExist)
 			} else {
-				_, err = Extract(f, MemFactory)
+				fs, err := MemFactory()
+				if err != nil {
+					panic(err)
+				}
+
+				err = Extract(f, fs)
 				require.ErrorContains(t, err, tc.wantErr)
 			}
 		})
@@ -103,7 +108,12 @@ func TestExtract(t *testing.T) {
 				f, err := source.Open(tc.tgz)
 				require.NoError(t, err)
 
-				fs, err := Extract(f, ff.factory)
+				fs, err := ff.factory()
+				if err != nil {
+					panic(err)
+				}
+
+				err = Extract(f, fs)
 				require.NoError(t, err, "%s: unexpected error extracting: %s", tc.tgz, err)
 
 				for _, path := range tc.tree {
