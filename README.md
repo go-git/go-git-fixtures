@@ -26,5 +26,3 @@ ls .git/objects/pack/
 	PackfileHash: "<PACK_HASH>",
 }
 ```
-
-4. Run `make generate`.

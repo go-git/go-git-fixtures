@@ -4,66 +4,78 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
-	"regexp"
-	"sort"
 	"testing"
 
+	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/stretchr/testify/require"
 )
 
 func TestExtractError(t *testing.T) {
-	for i, test := range [...]struct {
-		tgz    string
-		errRgx *regexp.Regexp
+	t.Parallel()
+
+	tests := []struct {
+		tgz      string
+		notFound bool
+		wantErr  string
 	}{
 		{
-			tgz:    "not-found",
-			errRgx: regexp.MustCompile("open not-found: (The system cannot find the file specified|no such file).*"),
-		}, {
-			tgz:    filepath.Join("fixtures", "invalid-gzip.tgz"),
-			errRgx: regexp.MustCompile("gzip: invalid header"),
-		}, {
-			tgz:    filepath.Join("fixtures", "not-a-tar.tgz"),
-			errRgx: regexp.MustCompile("unexpected EOF"),
+			tgz:      "not-found",
+			notFound: true,
 		},
-	} {
-		com := fmt.Sprintf("%d) tgz path = %s", i, test.tgz)
-		_, err, cleanup := Extract(osfs.New(""), test.tgz)
-		defer cleanup() // Clean up temporary dirs.
+		{
+			tgz:     "invalid-gzip.tgz",
+			wantErr: "gzip: invalid header",
+		},
+		{
+			tgz:     "not-a-tar.tgz",
+			wantErr: "unexpected EOF",
+		},
+	}
 
-		if err == nil {
-			t.Errorf("%s: expect an error, but none was returned", com)
-		} else if errorNotMatch(err, test.errRgx) {
-			t.Errorf("%s:\n\treceived error: %s\n\texpected regexp: %s\n",
-				com, err, test.errRgx)
-		}
+	for _, tc := range tests {
+		t.Run(fmt.Sprintf("tgz path = %s", tc.tgz), func(t *testing.T) {
+			d, err := os.Getwd()
+			require.NoError(t, err)
+
+			source := osfs.New(d + "/fixtures")
+			f, err := source.Open(tc.tgz)
+			if tc.notFound {
+				require.ErrorIs(t, err, os.ErrNotExist)
+			} else {
+				fs, err := MemFactory()
+				if err != nil {
+					panic(err)
+				}
+
+				err = Extract(f, fs)
+				require.ErrorContains(t, err, tc.wantErr)
+			}
+		})
 	}
 }
 
-func errorNotMatch(err error, regexp *regexp.Regexp) bool {
-	return !regexp.MatchString(err.Error())
-}
-
 func TestExtract(t *testing.T) {
-	for i, test := range [...]struct {
+	t.Parallel()
+
+	tests := []struct {
 		tgz  string
 		tree []string
 	}{
 		{
-			tgz: filepath.Join("fixtures", "test-01.tgz"),
+			tgz: "test-01.tgz",
 			tree: []string{
 				"foo.txt",
 			},
 		}, {
-			tgz: filepath.Join("fixtures", "test-02.tgz"),
+			tgz: "test-02.tgz",
 			tree: []string{
 				"baz.txt",
 				"bla.txt",
 				"foo.txt",
 			},
 		}, {
-			tgz: filepath.Join("fixtures", "test-03.tgz"),
+			tgz: "test-03.tgz",
 			tree: []string{
 				"bar",
 				filepath.Join("bar", "baz.txt"),
@@ -77,54 +89,38 @@ func TestExtract(t *testing.T) {
 				"foo.txt",
 			},
 		},
-	} {
-		com := fmt.Sprintf("%d) tgz path = %s", i, test.tgz)
-
-		path, err, cleanup := Extract(osfs.New(""), test.tgz)
-		defer cleanup() // Clean up temporary dirs.
-
-		if err != nil {
-			t.Fatalf("%s: unexpected error extracting: %s", test.tgz, err)
-		}
-
-		obt, err := relativeTree(path.Root())
-		if err != nil {
-			t.Errorf("%s: unexpected error calculating relative path: %s", com, err)
-		}
-
-		sort.Strings(test.tree)
-		if !reflect.DeepEqual(obt, test.tree) {
-			t.Fatalf("%s:\n\tobtained: %v\n\t expected: %v", com, obt, test.tree)
-		}
-	}
-}
-
-// relativeTree returns the list of relative paths to the files and
-// directories inside a given directory, recursively.
-func relativeTree(dir string) ([]string, error) {
-	dir = filepath.Clean(dir)
-
-	absPaths := []string{}
-	walkFn := func(path string, _ os.FileInfo, _ error) error {
-		absPaths = append(absPaths, path)
-		return nil
 	}
 
-	_ = filepath.Walk(dir, walkFn)
-
-	return toRelative(absPaths[1:], dir)
-}
-
-// toRelative returns the relative paths (form b) of the list of paths in l.
-func toRelative(l []string, b string) ([]string, error) {
-	r := []string{}
-	for _, p := range l {
-		rel, err := filepath.Rel(b, p)
-		if err != nil {
-			return nil, err
-		}
-		r = append(r, rel)
+	factories := []struct {
+		name    string
+		factory func() (billy.Filesystem, error)
+	}{
+		{name: "mem", factory: MemFactory},
+		{name: "osfs-temp", factory: func() (billy.Filesystem, error) {
+			return osfs.New(t.TempDir(), osfs.WithChrootOS()), nil
+		}},
 	}
 
-	return r, nil
+	for _, ff := range factories {
+		for _, tc := range tests {
+			t.Run(fmt.Sprintf("[%s] tgz path = %s", ff.name, tc.tgz), func(t *testing.T) {
+				source := osfs.New("fixtures", osfs.WithChrootOS())
+				f, err := source.Open(tc.tgz)
+				require.NoError(t, err)
+
+				fs, err := ff.factory()
+				if err != nil {
+					panic(err)
+				}
+
+				err = Extract(f, fs)
+				require.NoError(t, err, "%s: unexpected error extracting: %s", tc.tgz, err)
+
+				for _, path := range tc.tree {
+					_, err = fs.Stat(path)
+					require.NoError(t, err)
+				}
+			})
+		}
+	}
 }
