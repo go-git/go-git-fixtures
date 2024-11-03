@@ -3,8 +3,11 @@ package tgz
 import (
 	"archive/tar"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"io"
+	"io/fs"
+	"math"
 	"os"
 
 	"github.com/go-git/go-billy/v5"
@@ -48,18 +51,31 @@ func zipTarReader(r io.Reader) (*tar.Reader, error) {
 	return tar.NewReader(zip), nil
 }
 
+func filemode(mode int64) (fs.FileMode, error) {
+	if mode < 0 {
+		return 0, fmt.Errorf("mode cannot be negative")
+	}
+	if mode > math.MaxUint32 {
+		return 0, fmt.Errorf("mode cannot be greater than max uint32")
+	}
+	return os.FileMode(mode), nil
+}
+
 func unTar(fs billy.Filesystem, src *tar.Reader) error {
 	for {
 		header, err := src.Next()
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 			return err
 		}
 
 		dst := header.Name
-		mode := os.FileMode(header.Mode)
+		mode, err := filemode(header.Mode)
+		if err != nil {
+			return err
+		}
 		switch header.Typeflag {
 		case tar.TypeDir:
 			err := fs.MkdirAll(dst, mode)
