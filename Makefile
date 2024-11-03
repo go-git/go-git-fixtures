@@ -11,7 +11,7 @@ $(GOLANGCI):
 	mv $(TOOLS_BIN)/golangci-lint $(TOOLS_BIN)/golangci-lint-$(GOLANGCI_VERSION)
 
 test:
-	$(GOTEST) ./...
+	$(GOTEST) -race -parallel 20 ./...
 
 validate: validate-lint validate-dirty ## Run validation checks.
 
