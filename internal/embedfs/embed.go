@@ -20,7 +20,7 @@ type Embed struct {
 	underlying *embed.FS
 }
 
-func New(efs *embed.FS) billy.Filesystem {
+func New(efs *embed.FS) *Embed {
 	fs := &Embed{
 		underlying: efs,
 	}
@@ -41,6 +41,7 @@ func (fs *Embed) Stat(filename string) (os.FileInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return f.Stat()
 }
 
@@ -74,6 +75,7 @@ func (fs *Embed) OpenFile(filename string, flag int, _ os.FileMode) (billy.File,
 
 	// Only load the bytes to memory if the files is needed.
 	lazyFunc := func() *bytes.Reader { return bytes.NewReader(data) }
+
 	return toFile(lazyFunc, fi), nil
 }
 
@@ -84,9 +86,11 @@ func (fs *Embed) Join(elem ...string) string {
 	for i, el := range elem {
 		if el != "" {
 			clean := filepath.Clean(strings.Join(elem[i:], "/"))
+
 			return filepath.ToSlash(clean)
 		}
 	}
+
 	return ""
 }
 

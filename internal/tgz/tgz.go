@@ -14,6 +14,7 @@ import (
 	"github.com/go-git/go-billy/v5/memfs"
 )
 
+//nolint:gochecknoglobals
 var MemFactory = func() (billy.Filesystem, error) {
 	return memfs.New(), nil
 }
@@ -53,11 +54,12 @@ func zipTarReader(r io.Reader) (*tar.Reader, error) {
 
 func filemode(mode int64) (fs.FileMode, error) {
 	if mode < 0 {
-		return 0, fmt.Errorf("mode cannot be negative")
+		return 0, errors.New("mode cannot be negative")
 	}
 	if mode > math.MaxUint32 {
-		return 0, fmt.Errorf("mode cannot be greater than max uint32")
+		return 0, errors.New("mode cannot be greater than max uint32")
 	}
+
 	return os.FileMode(mode), nil
 }
 
@@ -68,6 +70,7 @@ func unTar(fs billy.Filesystem, src *tar.Reader) error {
 			if errors.Is(err, io.EOF) {
 				break
 			}
+
 			return err
 		}
 

@@ -13,11 +13,13 @@ import (
 	"github.com/go-git/go-git-fixtures/v5/internal/tgz"
 )
 
+//nolint:gochecknoglobals
 var Filesystem = embedfs.New(&data)
 
 //go:embed data
 var data embed.FS
 
+//nolint:gochecknoglobals
 var fixtures = Fixtures{{
 	Tags:         []string{"packfile", "ofs-delta", ".git", "root-reference"},
 	URL:          "https://github.com/git-fixtures/root-references.git",
@@ -144,12 +146,14 @@ var fixtures = Fixtures{{
 	Tags:         []string{"worktree", "dirty"},
 	WorktreeHash: "7203669c66103305e56b9dcdf940a7fbeb515f28",
 }, {
-	Tags:         []string{"packfile", "standalone"}, // standalone packfile that does not have any dependencies nor is part of any other fixture repo
+	// standalone packfile that does not have any dependencies nor is part of any other fixture repo.
+	Tags:         []string{"packfile", "standalone"},
 	PackfileHash: "3638209d310e10ea8d90c362d568be65dd5e03a6",
 }, {
-	Tags:         []string{"thinpack"}, // adds commit on top of spinnaker fixture 06ce06d0fc49646c4de733c45b7788aabad98a6f via a thin pack
+	// adds commit on top of spinnaker fixture 06ce06d0fc49646c4de733c45b7788aabad98a6f via a thin pack.
+	Tags:         []string{"thinpack"},
 	PackfileHash: "ee4fef0ef8be5053ebae4ce75acf062ddf3031fb",
-	Head:         "ee372bb08322c1e6e7c6c4f953cc6bf72784e7fb", // the thin pack adds this commit
+	Head:         "ee372bb08322c1e6e7c6c4f953cc6bf72784e7fb", // the thin pack adds this commit.
 }, {
 	Tags:       []string{"merge-base"},
 	DotGitHash: "26baa505b9f6fb2024b9999c140b75514718c988",
@@ -264,6 +268,7 @@ func (f *Fixture) DotGit(opts ...Option) billy.Filesystem {
 
 	if f.DotGitHash == "" && f.WorktreeHash != "" {
 		fs, _ := f.Worktree(opts...).Chroot(".git")
+
 		return fs
 	}
 
@@ -288,7 +293,7 @@ func (f *Fixture) DotGit(opts ...Option) billy.Filesystem {
 // EnsureIsBare overrides the config file with one where bare is true.
 func EnsureIsBare(fs billy.Filesystem) error {
 	if _, err := fs.Stat("config"); err != nil {
-		fmt.Printf("not .git folder: %s\n", err)
+		return fmt.Errorf("not .git folder: %w", err)
 	}
 
 	cfg, err := fs.OpenFile("config", os.O_TRUNC|os.O_WRONLY, 0)
@@ -308,6 +313,7 @@ func EnsureIsBare(fs billy.Filesystem) error {
 	)
 
 	_, err = io.Copy(cfg, content)
+
 	return err
 }
 
@@ -352,6 +358,7 @@ func (g Fixtures) One() *Fixture {
 	if len(g) == 0 {
 		return nil
 	}
+
 	return g[0]
 }
 

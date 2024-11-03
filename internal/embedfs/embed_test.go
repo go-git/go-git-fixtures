@@ -1,4 +1,4 @@
-package embedfs
+package embedfs_test
 
 import (
 	"embed"
@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-git-fixtures/v5/internal/embedfs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -18,6 +19,7 @@ var singleFile embed.FS
 //go:embed testdata
 var testdataDir embed.FS
 
+//nolint:gochecknoglobals
 var empty embed.FS
 
 func TestOpen(t *testing.T) {
@@ -43,8 +45,11 @@ func TestOpen(t *testing.T) {
 	}
 
 	for _, tc := range tests {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			fs := New(&testdataDir)
+			t.Parallel()
+
+			fs := embedfs.New(&testdataDir)
 
 			var got []byte
 			f, err := fs.Open(tc.name)
@@ -114,8 +119,11 @@ func TestOpenFileFlags(t *testing.T) {
 	}
 
 	for _, tc := range tests {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			fs := New(&testdataDir)
+			t.Parallel()
+
+			fs := embedfs.New(&testdataDir)
 
 			_, err := fs.OpenFile(tc.file, tc.flag, 0o700)
 			if tc.wantErr != "" {
@@ -156,8 +164,11 @@ func TestStat(t *testing.T) {
 	}
 
 	for _, tc := range tests {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			fs := New(&testdataDir)
+			t.Parallel()
+
+			fs := embedfs.New(&testdataDir)
 
 			fi, err := fs.Stat(tc.name)
 			if tc.wantErr {
@@ -212,8 +223,11 @@ func TestReadDir(t *testing.T) {
 	}
 
 	for _, tc := range tests {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			fs := New(tc.fs)
+			t.Parallel()
+
+			fs := embedfs.New(tc.fs)
 
 			fis, err := fs.ReadDir(tc.path)
 			if tc.wantErr {
@@ -241,7 +255,7 @@ func TestReadDir(t *testing.T) {
 func TestUnsupported(t *testing.T) {
 	t.Parallel()
 
-	fs := New(&testdataDir)
+	fs := embedfs.New(&testdataDir)
 
 	_, err := fs.Create("test")
 	require.ErrorIs(t, err, billy.ErrReadOnly)
@@ -259,7 +273,7 @@ func TestUnsupported(t *testing.T) {
 func TestFileUnsupported(t *testing.T) {
 	t.Parallel()
 
-	fs := New(&testdataDir)
+	fs := embedfs.New(&testdataDir)
 
 	f, err := fs.Open("testdata/empty.txt")
 	require.NoError(t, err)
@@ -272,8 +286,9 @@ func TestFileUnsupported(t *testing.T) {
 	require.ErrorIs(t, err, billy.ErrReadOnly)
 }
 
+//nolint:paralleltest
 func TestFileSeek(t *testing.T) {
-	fs := New(&testdataDir)
+	fs := embedfs.New(&testdataDir)
 
 	f, err := fs.Open("testdata/empty2.txt")
 	require.NoError(t, err)
@@ -295,6 +310,7 @@ func TestFileSeek(t *testing.T) {
 	}
 
 	for i, tc := range tests {
+		tc := tc
 		t.Run(fmt.Sprintf("#%d", i), func(t *testing.T) {
 			_, err = f.Seek(tc.seekOff, tc.seekWhence)
 			require.NoError(t, err)
@@ -309,6 +325,8 @@ func TestFileSeek(t *testing.T) {
 }
 
 func TestJoin(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		path []string
@@ -337,8 +355,11 @@ func TestJoin(t *testing.T) {
 	}
 
 	for _, tc := range tests {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			fs := New(&empty)
+			t.Parallel()
+
+			fs := embedfs.New(&empty)
 
 			got := fs.Join(tc.path...)
 			assert.Equal(t, tc.want, got)

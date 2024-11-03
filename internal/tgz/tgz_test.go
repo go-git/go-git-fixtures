@@ -1,4 +1,4 @@
-package tgz
+package tgz_test
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-git-fixtures/v5/internal/tgz"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,7 +35,10 @@ func TestExtractError(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		t.Run(fmt.Sprintf("tgz path = %s", tc.tgz), func(t *testing.T) {
+		tc := tc
+		t.Run("tgz path = "+tc.tgz, func(t *testing.T) {
+			t.Parallel()
+
 			d, err := os.Getwd()
 			require.NoError(t, err)
 
@@ -43,12 +47,12 @@ func TestExtractError(t *testing.T) {
 			if tc.notFound {
 				require.ErrorIs(t, err, os.ErrNotExist)
 			} else {
-				fs, err := MemFactory()
+				fs, err := tgz.MemFactory()
 				if err != nil {
 					panic(err)
 				}
 
-				err = Extract(f, fs)
+				err = tgz.Extract(f, fs)
 				require.ErrorContains(t, err, tc.wantErr)
 			}
 		})
@@ -95,15 +99,18 @@ func TestExtract(t *testing.T) {
 		name    string
 		factory func() (billy.Filesystem, error)
 	}{
-		{name: "mem", factory: MemFactory},
+		{name: "mem", factory: tgz.MemFactory},
 		{name: "osfs-temp", factory: func() (billy.Filesystem, error) {
 			return osfs.New(t.TempDir(), osfs.WithChrootOS()), nil
 		}},
 	}
 
 	for _, ff := range factories {
+		ff := ff
 		for _, tc := range tests {
 			t.Run(fmt.Sprintf("[%s] tgz path = %s", ff.name, tc.tgz), func(t *testing.T) {
+				t.Parallel()
+
 				source := osfs.New("fixtures", osfs.WithChrootOS())
 				f, err := source.Open(tc.tgz)
 				require.NoError(t, err)
@@ -113,7 +120,7 @@ func TestExtract(t *testing.T) {
 					panic(err)
 				}
 
-				err = Extract(f, fs)
+				err = tgz.Extract(f, fs)
 				require.NoError(t, err, "%s: unexpected error extracting: %s", tc.tgz, err)
 
 				for _, path := range tc.tree {

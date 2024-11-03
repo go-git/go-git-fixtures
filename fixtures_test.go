@@ -1,8 +1,9 @@
-package fixtures
+package fixtures_test
 
 import (
 	"testing"
 
+	fixtures "github.com/go-git/go-git-fixtures/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -10,21 +11,22 @@ import (
 func TestDotGit(t *testing.T) {
 	t.Parallel()
 
-	fs := Basic().One().DotGit(WithTargetDir(t.TempDir))
+	fs := fixtures.Basic().One().DotGit(fixtures.WithTargetDir(t.TempDir))
 	files, err := fs.ReadDir("/")
 	require.NoError(t, err)
 	assert.Greater(t, len(files), 1)
 
-	fs = Basic().One().DotGit(WithMemFS())
+	fs = fixtures.Basic().One().DotGit(fixtures.WithMemFS())
 	files, err = fs.ReadDir("/")
 	require.NoError(t, err)
 	assert.Greater(t, len(files), 1)
 }
 
+//nolint:cyclop
 func TestEmbeddedFiles(t *testing.T) {
 	t.Parallel()
 
-	for i, f := range fixtures {
+	for i, f := range fixtures.All() {
 		if f.PackfileHash != "" {
 			if f.Packfile() == nil {
 				assert.Fail(t, "failed to get pack file", i)
@@ -36,21 +38,21 @@ func TestEmbeddedFiles(t *testing.T) {
 		}
 
 		if f.WorktreeHash != "" {
-			if f.Worktree(WithMemFS()) == nil {
+			if f.Worktree(fixtures.WithMemFS()) == nil {
 				assert.Fail(t, "[mem] failed to get worktree", i)
 			}
 
-			if f.Worktree(WithTargetDir(t.TempDir)) == nil {
+			if f.Worktree(fixtures.WithTargetDir(t.TempDir)) == nil {
 				assert.Fail(t, "[tempdir] failed to get worktree", i)
 			}
 		}
 
 		if f.DotGitHash != "" {
-			if f.DotGit(WithMemFS()) == nil {
+			if f.DotGit(fixtures.WithMemFS()) == nil {
 				assert.Fail(t, "[mem] failed to get dotgit", i)
 			}
 
-			if f.DotGit(WithTargetDir(t.TempDir)) == nil {
+			if f.DotGit(fixtures.WithTargetDir(t.TempDir)) == nil {
 				assert.Fail(t, "[tempdir] failed to get dotgit", i)
 			}
 		}
@@ -60,7 +62,7 @@ func TestEmbeddedFiles(t *testing.T) {
 func TestRevFiles(t *testing.T) {
 	t.Parallel()
 
-	f := ByTag("packfile-sha256").One()
+	f := fixtures.ByTag("packfile-sha256").One()
 
 	assert.NotNil(t, f)
 	assert.NotNil(t, f.Rev(), "failed to get rev file")
