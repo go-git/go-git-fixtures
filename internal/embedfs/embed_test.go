@@ -27,6 +27,7 @@ func TestOpen(t *testing.T) {
 
 	tests := []struct {
 		name    string
+		dir     string
 		want    []byte
 		wantErr bool
 	}{
@@ -36,6 +37,16 @@ func TestOpen(t *testing.T) {
 		},
 		{
 			name: "testdata/empty2.txt",
+			want: []byte("test"),
+		},
+		{
+			name: "empty.txt",
+			dir:  "testdata",
+			want: []byte(""),
+		},
+		{
+			name: "empty2.txt",
+			dir:  "testdata",
 			want: []byte("test"),
 		},
 		{
@@ -49,7 +60,7 @@ func TestOpen(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			fs := embedfs.New(&testdataDir)
+			fs := embedfs.New(&testdataDir, tc.dir)
 
 			var got []byte
 			f, err := fs.Open(tc.name)
@@ -123,7 +134,7 @@ func TestOpenFileFlags(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			fs := embedfs.New(&testdataDir)
+			fs := embedfs.New(&testdataDir, "")
 
 			_, err := fs.OpenFile(tc.file, tc.flag, 0o700)
 			if tc.wantErr != "" {
@@ -140,6 +151,7 @@ func TestStat(t *testing.T) {
 
 	tests := []struct {
 		name    string
+		dir     string
 		want    string
 		isDir   bool
 		wantErr bool
@@ -150,6 +162,16 @@ func TestStat(t *testing.T) {
 		},
 		{
 			name: "testdata/empty2.txt",
+			want: "empty2.txt",
+		},
+		{
+			name: "empty.txt",
+			dir:  "testdata",
+			want: "empty.txt",
+		},
+		{
+			name: "empty2.txt",
+			dir:  "testdata",
 			want: "empty2.txt",
 		},
 		{
@@ -168,7 +190,7 @@ func TestStat(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			fs := embedfs.New(&testdataDir)
+			fs := embedfs.New(&testdataDir, tc.dir)
 
 			fi, err := fs.Stat(tc.name)
 			if tc.wantErr {
@@ -227,7 +249,7 @@ func TestReadDir(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			fs := embedfs.New(tc.fs)
+			fs := embedfs.New(tc.fs, "")
 
 			fis, err := fs.ReadDir(tc.path)
 			if tc.wantErr {
@@ -255,7 +277,7 @@ func TestReadDir(t *testing.T) {
 func TestUnsupported(t *testing.T) {
 	t.Parallel()
 
-	fs := embedfs.New(&testdataDir)
+	fs := embedfs.New(&testdataDir, "")
 
 	_, err := fs.Create("test")
 	require.ErrorIs(t, err, billy.ErrReadOnly)
@@ -273,7 +295,7 @@ func TestUnsupported(t *testing.T) {
 func TestFileUnsupported(t *testing.T) {
 	t.Parallel()
 
-	fs := embedfs.New(&testdataDir)
+	fs := embedfs.New(&testdataDir, "")
 
 	f, err := fs.Open("testdata/empty.txt")
 	require.NoError(t, err)
@@ -288,7 +310,7 @@ func TestFileUnsupported(t *testing.T) {
 
 //nolint:paralleltest
 func TestFileSeek(t *testing.T) {
-	fs := embedfs.New(&testdataDir)
+	fs := embedfs.New(&testdataDir, "")
 
 	f, err := fs.Open("testdata/empty2.txt")
 	require.NoError(t, err)
@@ -359,7 +381,7 @@ func TestJoin(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			fs := embedfs.New(&empty)
+			fs := embedfs.New(&empty, "")
 
 			got := fs.Join(tc.path...)
 			assert.Equal(t, tc.want, got)

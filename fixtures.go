@@ -14,7 +14,7 @@ import (
 )
 
 //nolint:gochecknoglobals
-var Filesystem = embedfs.New(&data)
+var Filesystem = embedfs.New(&data, "data")
 
 //go:embed data
 var data embed.FS

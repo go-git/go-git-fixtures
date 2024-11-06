@@ -18,11 +18,13 @@ import (
 
 type Embed struct {
 	underlying *embed.FS
+	dir        string
 }
 
-func New(efs *embed.FS) *Embed {
+func New(efs *embed.FS, dir string) *Embed {
 	fs := &Embed{
 		underlying: efs,
+		dir:        dir,
 	}
 
 	if efs == nil {
@@ -36,8 +38,16 @@ func (fs *Embed) Root() string {
 	return ""
 }
 
+func (fs *Embed) prefix(filename string) string {
+	if fs.dir != "" && !strings.HasPrefix(filename, fs.dir+"/") {
+		return fs.dir + "/" + filename
+	}
+
+	return filename
+}
+
 func (fs *Embed) Stat(filename string) (os.FileInfo, error) {
-	f, err := fs.underlying.Open(filename)
+	f, err := fs.underlying.Open(fs.prefix(filename))
 	if err != nil {
 		return nil, err
 	}
@@ -54,6 +64,7 @@ func (fs *Embed) OpenFile(filename string, flag int, _ os.FileMode) (billy.File,
 		return nil, billy.ErrReadOnly
 	}
 
+	filename = fs.prefix(filename)
 	f, err := fs.underlying.Open(filename)
 	if err != nil {
 		return nil, err
