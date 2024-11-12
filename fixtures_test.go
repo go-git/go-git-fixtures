@@ -70,6 +70,7 @@ func TestRevFiles(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
+	t.Parallel()
 	fs := fixtures.All()
 
 	assert.Len(t, fs, 38)
