@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"strings"
 	"testing"
 
@@ -195,7 +196,12 @@ var fixtures = Fixtures{{
 }}
 
 func All() Fixtures {
-	return fixtures
+	all := make(Fixtures, 0, len(fixtures))
+	for _, f := range fixtures {
+		all = append(all, f.Clone())
+	}
+
+	return all
 }
 
 func Basic() Fixtures {
@@ -290,6 +296,20 @@ func (f *Fixture) DotGit(opts ...Option) billy.Filesystem {
 	return fs
 }
 
+func (f *Fixture) Clone() *Fixture {
+	nf := &Fixture{
+		URL:          f.URL,
+		DotGitHash:   f.DotGitHash,
+		Head:         f.Head,
+		PackfileHash: f.PackfileHash,
+		WorktreeHash: f.WorktreeHash,
+		ObjectsCount: f.ObjectsCount,
+	}
+	nf.Tags = slices.Clone(f.Tags)
+
+	return nf
+}
+
 // EnsureIsBare overrides the config file with one where bare is true.
 func EnsureIsBare(fs billy.Filesystem) error {
 	if _, err := fs.Stat("config"); err != nil {
@@ -359,14 +379,14 @@ func (g Fixtures) One() *Fixture {
 		return nil
 	}
 
-	return g[0]
+	return g[0].Clone()
 }
 
 func (g Fixtures) ByTag(tag string) Fixtures {
 	r := make(Fixtures, 0, len(g))
 	for _, f := range g {
 		if f.Is(tag) {
-			r = append(r, f)
+			r = append(r, f.Clone())
 		}
 	}
 
@@ -377,7 +397,7 @@ func (g Fixtures) ByURL(url string) Fixtures {
 	r := make(Fixtures, 0, len(g))
 	for _, f := range g {
 		if f.URL == url {
-			r = append(r, f)
+			r = append(r, f.Clone())
 		}
 	}
 
@@ -388,7 +408,7 @@ func (g Fixtures) Exclude(tag string) Fixtures {
 	r := make(Fixtures, 0, len(g))
 	for _, f := range g {
 		if !f.Is(tag) {
-			r = append(r, f)
+			r = append(r, f.Clone())
 		}
 	}
 
