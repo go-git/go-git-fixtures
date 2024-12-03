@@ -51,6 +51,7 @@ func (fs *Embed) Stat(filename string) (os.FileInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer f.Close()
 
 	return f.Stat()
 }
@@ -69,6 +70,7 @@ func (fs *Embed) OpenFile(filename string, flag int, _ os.FileMode) (billy.File,
 	if err != nil {
 		return nil, err
 	}
+	defer f.Close()
 
 	fi, err := f.Stat()
 	if err != nil {
