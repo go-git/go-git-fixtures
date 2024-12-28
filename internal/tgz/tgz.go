@@ -3,8 +3,10 @@ package tgz
 import (
 	"archive/tar"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"io"
+	"math"
 	"os"
 
 	"github.com/go-git/go-billy/v5"
@@ -59,6 +61,9 @@ func unTar(fs billy.Filesystem, src *tar.Reader) error {
 		}
 
 		dst := header.Name
+		if header.Mode > math.MaxUint32 || header.Mode < 0 {
+			return errors.New("cannot use header mode as filemode")
+		}
 		mode := os.FileMode(header.Mode)
 		switch header.Typeflag {
 		case tar.TypeDir:
