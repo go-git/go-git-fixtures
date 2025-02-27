@@ -9,13 +9,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-git-fixtures/v5/internal/embedfs"
+	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v6/embedfs"
 	"github.com/go-git/go-git-fixtures/v5/internal/tgz"
 )
 
 //nolint:gochecknoglobals
-var Filesystem = embedfs.New(&data, "data")
+var Filesystem = embedfs.New(&data)
 
 //go:embed data
 var data embed.FS
@@ -304,8 +304,8 @@ func (f *Fixture) Clone() *Fixture {
 		PackfileHash: f.PackfileHash,
 		WorktreeHash: f.WorktreeHash,
 		ObjectsCount: f.ObjectsCount,
+		Tags:         slices.Clone(f.Tags),
 	}
-	nf.Tags = slices.Clone(f.Tags)
 
 	return nf
 }

@@ -1,4 +1,4 @@
-# go-git-fixtures
+# go-git-fixtures [![GoDoc](https://godoc.org/gopkg.in/go-git/go-git-fixtures.v6?status.svg)](https://pkg.go.dev/github.com/go-git/go-git-fixtures/v6) [![Test](https://github.com/go-git/go-git-fixtures/workflows/Test/badge.svg)](https://github.com/go-git/go-git-fixtures/actions?query=workflow%3ATest) [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/go-git/go-git-fixtures/badge)](https://scorecard.dev/viewer/?uri=github.com/go-git/go-git-fixtures)
 
 git repository fixtures used by [go-git](https://github.com/go-git/go-git)
 

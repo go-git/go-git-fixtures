@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/go-git/go-billy/v5"
-	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-billy/v6"
+	"github.com/go-git/go-billy/v6/osfs"
 	"github.com/go-git/go-git-fixtures/v5/internal/tgz"
 	"github.com/stretchr/testify/require"
 )
@@ -23,19 +23,21 @@ func TestExtractError(t *testing.T) {
 		{
 			tgz:      "not-found",
 			notFound: true,
+			wantErr:  "",
 		},
 		{
-			tgz:     "invalid-gzip.tgz",
-			wantErr: "gzip: invalid header",
+			tgz:      "invalid-gzip.tgz",
+			notFound: false,
+			wantErr:  "gzip: invalid header",
 		},
 		{
-			tgz:     "not-a-tar.tgz",
-			wantErr: "unexpected EOF",
+			tgz:      "not-a-tar.tgz",
+			notFound: false,
+			wantErr:  "unexpected EOF",
 		},
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run("tgz path = "+tc.tgz, func(t *testing.T) {
 			t.Parallel()
 
@@ -59,7 +61,7 @@ func TestExtractError(t *testing.T) {
 	}
 }
 
-func TestExtract(t *testing.T) {
+func TestExtract(t *testing.T) { //nolint
 	t.Parallel()
 
 	tests := []struct {
@@ -106,7 +108,6 @@ func TestExtract(t *testing.T) {
 	}
 
 	for _, ff := range factories {
-		ff := ff
 		for _, tc := range tests {
 			t.Run(fmt.Sprintf("[%s] tgz path = %s", ff.name, tc.tgz), func(t *testing.T) {
 				t.Parallel()
