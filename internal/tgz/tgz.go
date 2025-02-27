@@ -14,6 +14,12 @@ import (
 	"github.com/go-git/go-billy/v6/memfs"
 )
 
+var (
+	ErrUnableToUntarType            = errors.New("unable to untar type")
+	ErrCannotBeNegative             = errors.New("mode cannot be negative")
+	ErrCannotBeGreaterThanMaxUInt32 = errors.New("mode cannot be greater than max uint32")
+)
+
 //nolint:gochecknoglobals
 var MemFactory = func() (billy.Filesystem, error) {
 	return memfs.New(), nil
@@ -54,10 +60,10 @@ func zipTarReader(r io.Reader) (*tar.Reader, error) {
 
 func filemode(mode int64) (fs.FileMode, error) {
 	if mode < 0 {
-		return 0, errors.New("mode cannot be negative")
+		return 0, ErrCannotBeNegative
 	}
 	if mode > math.MaxUint32 {
-		return 0, errors.New("mode cannot be greater than max uint32")
+		return 0, ErrCannotBeGreaterThanMaxUInt32
 	}
 
 	return os.FileMode(mode), nil
@@ -91,7 +97,7 @@ func unTar(fs billy.Filesystem, src *tar.Reader) error {
 				return err
 			}
 		default:
-			return fmt.Errorf("unable to untar type: %c in file %s",
+			return fmt.Errorf("%w: %c in file %s", ErrUnableToUntarType,
 				header.Typeflag, header.Name)
 		}
 	}

@@ -304,8 +304,8 @@ func (f *Fixture) Clone() *Fixture {
 		PackfileHash: f.PackfileHash,
 		WorktreeHash: f.WorktreeHash,
 		ObjectsCount: f.ObjectsCount,
+		Tags:         slices.Clone(f.Tags),
 	}
-	nf.Tags = slices.Clone(f.Tags)
 
 	return nf
 }

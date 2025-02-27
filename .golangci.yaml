@@ -6,12 +6,6 @@ linters:
   enable-all: true
   disable:
     - depguard
-    - err113
-    - execinquery
-    - exhaustruct
-    - exportloopref
-    - funlen
-    - gomnd
     - ireturn
     - mnd
     - varnamelen

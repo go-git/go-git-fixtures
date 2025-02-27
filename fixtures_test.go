@@ -96,8 +96,6 @@ func TestByTag(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
-
 		t.Run(tc.tag, func(t *testing.T) {
 			t.Parallel()
 
@@ -133,8 +131,6 @@ func TestByURL(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
-
 		t.Run(tc.URL, func(t *testing.T) {
 			t.Parallel()
 
@@ -148,7 +144,6 @@ func TestIdx(t *testing.T) {
 	t.Parallel()
 
 	for i, f := range fixtures.ByTag("packfile") {
-		f := f
 		t.Run("#"+strconv.Itoa(i), func(t *testing.T) {
 			t.Parallel()
 
