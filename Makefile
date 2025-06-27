@@ -1,7 +1,7 @@
 GOCMD = go
 GOTEST = $(GOCMD) test 
 
-GOLANGCI_VERSION ?= v1.64.5
+GOLANGCI_VERSION ?= v2.1.6
 TOOLS_BIN := $(shell mkdir -p build/tools && realpath build/tools)
 
 GOLANGCI = $(TOOLS_BIN)/golangci-lint-$(GOLANGCI_VERSION)
