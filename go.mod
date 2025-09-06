@@ -7,7 +7,7 @@ toolchain go1.24.4
 
 require (
 	github.com/go-git/go-billy/v6 v6.0.0-20250627091229-31e2a16eef30
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (
