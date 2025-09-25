@@ -73,7 +73,7 @@ func TestAll(t *testing.T) {
 	t.Parallel()
 	fs := fixtures.All()
 
-	assert.Len(t, fs, 38)
+	assert.Len(t, fs, 39)
 }
 
 func TestByTag(t *testing.T) {

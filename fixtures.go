@@ -193,6 +193,10 @@ var fixtures = Fixtures{{
 }, {
 	Tags:         []string{"packfile", "notes"},
 	PackfileHash: "bc4b855a55cae7703c023d4e36e3a7c9f5d84491",
+}, {
+	Tags:       []string{".git-sha256"},
+	URL:        "https://gitlab.com/pjbgf/sha256.git",
+	DotGitHash: "40143428b59fe03546fabba0603268bba3b3c58b",
 }}
 
 func All() Fixtures {

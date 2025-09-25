@@ -26,3 +26,27 @@ ls .git/objects/pack/
 	PackfileHash: "<PACK_HASH>",
 }
 ```
+
+### Adding new dot fixtures
+
+1. Tarball the contents of .git from a git repository:
+
+```sh
+git clone https://<repository>
+cd <repository_name>
+git checkout <REF>
+git gc
+
+tar -czf git.tgz -C .git .
+```
+
+2. Get the sha1 of the file: `shasum < git-.tgz`.
+3. Move the file using the checksum to `data/git-<checksum>.tgz`
+4. Add a new entry in `fixtures.go`:
+
+```
+{
+	Tags:         []string{"packfile", "<TAG_TO_REFER_TO>"},
+	PackfileHash: "<PACK_HASH>",
+}
+```
