@@ -1,6 +1,7 @@
 GOCMD = go
 GOTEST = $(GOCMD) test 
 
+# renovate: datasource=github-tags depName=golangci/golangci-lint
 GOLANGCI_VERSION ?= v2.1.6
 TOOLS_BIN := $(shell mkdir -p build/tools && realpath build/tools)
 
@@ -17,14 +18,6 @@ validate: validate-lint validate-dirty ## Run validation checks.
 
 validate-lint: $(GOLANGCI)
 	$(GOLANGCI) run
-
-define go-install-tool
-@[ -f $(1) ] || { \
-set -e ;\
-echo "Downloading $(2)" ;\
-GOBIN=$(TOOLS_BIN) go install $(2) ;\
-}
-endef
 
 validate-dirty:
 ifneq ($(shell git status --porcelain --untracked-files=no),)
