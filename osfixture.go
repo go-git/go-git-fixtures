@@ -9,16 +9,17 @@ import (
 )
 
 type OSFixture struct {
-	dir string
 	*Fixture
+
+	dir string
 }
 
 // NewOSFixture converts a Fixture which is based on embedfs, into
 // an OS based fixture.
 func NewOSFixture(f *Fixture, dir string) *OSFixture {
 	return &OSFixture{
-		dir:     dir,
 		Fixture: f,
+		dir:     dir,
 	}
 }
 
@@ -67,6 +68,7 @@ func embedToOsfs(dir string, f billy.File) billy.File {
 	defer f.Close()
 
 	fs := osfs.New(dir)
+
 	out, err := fs.TempFile("", "embed")
 	if err != nil {
 		panic(err)

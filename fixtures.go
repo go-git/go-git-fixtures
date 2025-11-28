@@ -232,13 +232,7 @@ type Fixture struct {
 }
 
 func (f *Fixture) Is(tag string) bool {
-	for _, t := range f.Tags {
-		if t == tag {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(f.Tags, tag)
 }
 
 func (f *Fixture) Packfile() billy.File {
@@ -316,7 +310,8 @@ func (f *Fixture) Clone() *Fixture {
 
 // EnsureIsBare overrides the config file with one where bare is true.
 func EnsureIsBare(fs billy.Filesystem) error {
-	if _, err := fs.Stat("config"); err != nil {
+	_, err := fs.Stat("config")
+	if err != nil {
 		return fmt.Errorf("not .git folder: %w", err)
 	}
 
@@ -370,6 +365,7 @@ type Fixtures []*Fixture
 // Run calls test within a t.Run for each fixture in g.
 func (g Fixtures) Run(t *testing.T, test func(*testing.T, *Fixture)) {
 	t.Helper()
+
 	for _, f := range g {
 		name := fmt.Sprintf("fixture run (%q, %q)", f.URL, f.Tags)
 		t.Run(name, func(t *testing.T) {

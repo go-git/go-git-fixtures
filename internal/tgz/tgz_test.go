@@ -45,6 +45,7 @@ func TestExtractError(t *testing.T) {
 			require.NoError(t, err)
 
 			source := osfs.New(d + "/fixtures")
+
 			f, err := source.Open(tc.tgz)
 			if tc.notFound {
 				require.ErrorIs(t, err, os.ErrNotExist)
