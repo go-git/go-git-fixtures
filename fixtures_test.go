@@ -71,6 +71,7 @@ func TestRevFiles(t *testing.T) {
 
 func TestAll(t *testing.T) {
 	t.Parallel()
+
 	fs := fixtures.All()
 
 	assert.Len(t, fs, 39)
@@ -78,6 +79,7 @@ func TestAll(t *testing.T) {
 
 func TestByTag(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		tag string
 		len int

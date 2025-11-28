@@ -62,6 +62,7 @@ func filemode(mode int64) (fs.FileMode, error) {
 	if mode < 0 {
 		return 0, ErrCannotBeNegative
 	}
+
 	if mode > math.MaxUint32 {
 		return 0, ErrCannotBeGreaterThanMaxUInt32
 	}
@@ -81,10 +82,12 @@ func unTar(fs billy.Filesystem, src *tar.Reader) error {
 		}
 
 		dst := header.Name
+
 		mode, err := filemode(header.Mode)
 		if err != nil {
 			return err
 		}
+
 		switch header.Typeflag {
 		case tar.TypeDir:
 			err := fs.MkdirAll(dst, mode)
@@ -110,6 +113,7 @@ func makeFile(fs billy.Filesystem, path string, mode os.FileMode, contents io.Re
 	if err != nil {
 		return err
 	}
+
 	defer func() {
 		errClose := w.Close()
 		if err == nil {
@@ -123,7 +127,8 @@ func makeFile(fs billy.Filesystem, path string, mode os.FileMode, contents io.Re
 	}
 
 	if fs, ok := fs.(billy.Change); ok {
-		if err = fs.Chmod(path, mode); err != nil {
+		err = fs.Chmod(path, mode)
+		if err != nil {
 			return err
 		}
 	}
