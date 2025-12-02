@@ -33,3 +33,21 @@ jobs:
 
     - name: Test
       run: make test
+
+    - name: Check index files
+      shell: bash
+      run: |
+        ls data/pack-*.pack | \
+        grep -v 407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2 | \
+        grep -v ee4fef0ef8be5053ebae4ce75acf062ddf3031fb | \
+        xargs -I{} git verify-pack -v {}
+
+    - name: Re-generate reverse index files
+      shell: bash
+      run: |
+        ls data/pack-*.pack | \
+        grep -v 407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2 | \
+        grep -v ee4fef0ef8be5053ebae4ce75acf062ddf3031fb | \
+        xargs -I{} git index-pack --rev-index -v {}
+        git status
+        git diff-index --quiet HEAD --
