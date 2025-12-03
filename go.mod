@@ -3,7 +3,7 @@ module github.com/go-git/go-git-fixtures/v5
 // go-git supports the last 3 stable Go versions.
 go 1.24.0
 
-toolchain go1.24.10
+toolchain go1.24.11
 
 require (
 	github.com/go-git/go-billy/v6 v6.0.0-20251120215217-80673c4ccbfb
