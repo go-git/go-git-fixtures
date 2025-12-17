@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/go-git/go-billy/v6/osfs"
 	fixtures "github.com/go-git/go-git-fixtures/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -154,6 +155,66 @@ func TestIdx(t *testing.T) {
 
 			err := index.Close()
 			assert.NoError(t, err)
+		})
+	}
+}
+
+func TestWithMemFS(t *testing.T) {
+	t.Parallel()
+
+	f := fixtures.Basic().One()
+	require.NotNil(t, f)
+
+	fs := f.DotGit(fixtures.WithMemFS())
+	require.NotNil(t, fs)
+
+	files, err := fs.ReadDir("/")
+	require.NoError(t, err)
+	assert.NotEmpty(t, files)
+
+	stat, err := fs.Stat("config")
+	require.NoError(t, err)
+	assert.NotNil(t, stat)
+}
+
+func TestWithTargetDir(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		options []osfs.Option
+	}{
+		{
+			name:    "no options",
+			options: nil,
+		},
+		{
+			name:    "with chroot",
+			options: []osfs.Option{osfs.WithChrootOS()},
+		},
+		{
+			name:    "with bound",
+			options: []osfs.Option{osfs.WithBoundOS()},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			f := fixtures.Basic().One()
+			require.NotNil(t, f)
+
+			fs := f.DotGit(fixtures.WithTargetDir(t.TempDir, tc.options...))
+			require.NotNil(t, fs)
+
+			files, err := fs.ReadDir("/")
+			require.NoError(t, err)
+			assert.NotEmpty(t, files)
+
+			stat, err := fs.Stat("config")
+			require.NoError(t, err)
+			assert.NotNil(t, stat)
 		})
 	}
 }
