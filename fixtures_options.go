@@ -32,17 +32,11 @@ func WithMemFS() Option {
 // The caller is responsible for removing the dir from disk. Therefore, it is recommended
 // to delegate that to the testing framework:
 //
-// Go:
-//
 //	WithTargetDir(t.TempDir)
-//
-// Check Framework:
-//
-//	WithTargetDir(c.Mkdir)
-func WithTargetDir(dirName func() string) Option {
+func WithTargetDir(dirName func() string, opts ...osfs.Option) Option {
 	return func(o *options) {
 		o.fsFactory = func() (billy.Filesystem, error) {
-			return osfs.New(dirName(), osfs.WithChrootOS()), nil
+			return osfs.New(dirName(), opts...), nil
 		}
 	}
 }
