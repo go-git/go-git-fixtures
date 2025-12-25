@@ -2,8 +2,8 @@ github.com/cyphar/filepath-securejoin v0.6.1 h1:5CeZ1jPXEiYt3+Z6zqprSAgSWiggmpVy
 github.com/cyphar/filepath-securejoin v0.6.1/go.mod h1:A8hd4EnAeyujCJRrICiOWqjS1AX0a9kM5XL+NwKoYSc=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/go-git/go-billy/v6 v6.0.0-20251209065551-8afc3eb64e4d h1:nfZPVEha54DwXl8twSNxi9J8edIiqfpSvnq/mGPfgc4=
-github.com/go-git/go-billy/v6 v6.0.0-20251209065551-8afc3eb64e4d/go.mod h1:d3XQcsHu1idnquxt48kAv+h+1MUiYKLH/e7LAzjP+pI=
+github.com/go-git/go-billy/v6 v6.0.0-20251217170237-e9738f50a3cd h1:Gd/f9cGi/3h1JOPaa6er+CkKUGyGX2DBJdFbDKVO+R0=
+github.com/go-git/go-billy/v6 v6.0.0-20251217170237-e9738f50a3cd/go.mod h1:d3XQcsHu1idnquxt48kAv+h+1MUiYKLH/e7LAzjP+pI=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
