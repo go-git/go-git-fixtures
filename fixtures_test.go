@@ -1,6 +1,7 @@
 package fixtures_test
 
 import (
+	"io"
 	"strconv"
 	"testing"
 
@@ -28,7 +29,6 @@ func TestDotGit(t *testing.T) {
 	assert.Greater(t, len(files), 1)
 }
 
-//nolint:cyclop
 func TestEmbeddedFiles(t *testing.T) {
 	t.Parallel()
 
@@ -281,4 +281,29 @@ func TestByObjectFormat(t *testing.T) {
 			assert.Len(t, f, tc.expectedLen)
 		})
 	}
+}
+
+func TestEnsureIsBare(t *testing.T) {
+	t.Parallel()
+
+	f := fixtures.Basic().One()
+	require.NotNil(t, f)
+
+	fs, err := f.DotGit(fixtures.WithMemFS())
+	require.NoError(t, err)
+
+	err = fixtures.EnsureIsBare(fs)
+	require.NoError(t, err)
+
+	cfg, err := fs.Open("config")
+	require.NoError(t, err)
+
+	t.Cleanup(func() {
+		cfg.Close()
+	})
+
+	content, err := io.ReadAll(cfg)
+	require.NoError(t, err)
+
+	assert.Contains(t, string(content), "bare = true")
 }
