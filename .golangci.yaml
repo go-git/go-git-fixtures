@@ -8,6 +8,7 @@ linters:
     - ireturn
     - mnd
     - varnamelen
+    - unqueryvet
     - wrapcheck
     - wsl
   exclusions:
