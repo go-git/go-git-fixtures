@@ -321,34 +321,37 @@ func (f *Fixture) Rev() (billy.File, error) {
 
 // DotGit creates a new temporary directory and unpacks the repository .git
 // directory into it. Multiple calls to DotGit returns different directories.
-func (f *Fixture) DotGit(opts ...Option) billy.Filesystem {
+func (f *Fixture) DotGit(opts ...Option) (billy.Filesystem, error) {
 	o := newOptions()
 	for _, opt := range opts {
 		opt(o)
 	}
 
 	if f.DotGitHash == "" && f.WorktreeHash != "" {
-		fs, _ := f.Worktree(opts...).Chroot(".git")
+		fs, err := f.Worktree(opts...)
+		if err != nil {
+			return nil, err
+		}
 
-		return fs
+		return fs.Chroot(".git")
 	}
 
 	file, err := Filesystem.Open(fmt.Sprintf("data/git-%s.tgz", f.DotGitHash))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	fs, err := o.fsFactory()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = tgz.Extract(file, fs)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return fs
+	return fs, nil
 }
 
 func (f *Fixture) Clone() *Fixture {
@@ -394,7 +397,7 @@ func EnsureIsBare(fs billy.Filesystem) error {
 	return err
 }
 
-func (f *Fixture) Worktree(opts ...Option) billy.Filesystem {
+func (f *Fixture) Worktree(opts ...Option) (billy.Filesystem, error) {
 	o := newOptions()
 	for _, opt := range opts {
 		opt(o)
@@ -402,20 +405,20 @@ func (f *Fixture) Worktree(opts ...Option) billy.Filesystem {
 
 	file, err := Filesystem.Open(fmt.Sprintf("data/worktree-%s.tgz", f.WorktreeHash))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	fs, err := o.fsFactory()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = tgz.Extract(file, fs)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return fs
+	return fs, nil
 }
 
 type Fixtures []*Fixture

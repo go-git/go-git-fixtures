@@ -13,12 +13,16 @@ import (
 func TestDotGit(t *testing.T) {
 	t.Parallel()
 
-	fs := fixtures.Basic().One().DotGit(fixtures.WithTargetDir(t.TempDir))
+	fs, err := fixtures.Basic().One().DotGit(fixtures.WithTargetDir(t.TempDir))
+	require.NoError(t, err)
+
 	files, err := fs.ReadDir("/")
 	require.NoError(t, err)
 	assert.Greater(t, len(files), 1)
 
-	fs = fixtures.Basic().One().DotGit(fixtures.WithMemFS())
+	fs, err = fixtures.Basic().One().DotGit(fixtures.WithMemFS())
+	require.NoError(t, err)
+
 	files, err = fs.ReadDir("/")
 	require.NoError(t, err)
 	assert.Greater(t, len(files), 1)
@@ -36,23 +40,23 @@ func TestEmbeddedFiles(t *testing.T) {
 		}
 
 		if f.WorktreeHash != "" {
-			if f.Worktree(fixtures.WithMemFS()) == nil {
-				assert.Fail(t, "[mem] failed to get worktree", i)
-			}
+			wt, err := f.Worktree(fixtures.WithMemFS())
+			require.NoError(t, err)
+			assert.NotNil(t, wt, "[mem] failed to get worktree", i)
 
-			if f.Worktree(fixtures.WithTargetDir(t.TempDir)) == nil {
-				assert.Fail(t, "[tempdir] failed to get worktree", i)
-			}
+			wt, err = f.Worktree(fixtures.WithTargetDir(t.TempDir))
+			require.NoError(t, err)
+			assert.NotNil(t, wt, "[tempdir] failed to get worktree", i)
 		}
 
 		if f.DotGitHash != "" {
-			if f.DotGit(fixtures.WithMemFS()) == nil {
-				assert.Fail(t, "[mem] failed to get dotgit", i)
-			}
+			dot, err := f.DotGit(fixtures.WithMemFS())
+			require.NoError(t, err)
+			assert.NotNil(t, dot, "[mem] failed to get dotgit", i)
 
-			if f.DotGit(fixtures.WithTargetDir(t.TempDir)) == nil {
-				assert.Fail(t, "[tempdir] failed to get dotgit", i)
-			}
+			dot, err = f.DotGit(fixtures.WithTargetDir(t.TempDir))
+			require.NoError(t, err)
+			assert.NotNil(t, dot, "[tempdir] failed to get dotgit", i)
 		}
 	}
 }
@@ -163,7 +167,8 @@ func TestWithMemFS(t *testing.T) {
 	f := fixtures.Basic().One()
 	require.NotNil(t, f)
 
-	fs := f.DotGit(fixtures.WithMemFS())
+	fs, err := f.DotGit(fixtures.WithMemFS())
+	require.NoError(t, err)
 	require.NotNil(t, fs)
 
 	files, err := fs.ReadDir("/")
@@ -203,7 +208,8 @@ func TestWithTargetDir(t *testing.T) {
 			f := fixtures.Basic().One()
 			require.NotNil(t, f)
 
-			fs := f.DotGit(fixtures.WithTargetDir(t.TempDir, tc.options...))
+			fs, err := f.DotGit(fixtures.WithTargetDir(t.TempDir, tc.options...))
+			require.NoError(t, err)
 			require.NotNil(t, fs)
 
 			files, err := fs.ReadDir("/")
