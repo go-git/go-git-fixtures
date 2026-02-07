@@ -224,7 +224,7 @@ var fixtures = Fixtures{{
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile-sha256", "packfile"}, // Drop packfile-sha256 as part of V6.
+	Tags:         []string{"packfile-sha256", "packfile", "rev"}, // Drop packfile-sha256 as part of V6.
 	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
 	ObjectsCount: 5,
 	ObjectFormat: "sha256",
@@ -292,31 +292,31 @@ func (f *Fixture) Is(tag string) bool {
 	return slices.Contains(f.Tags, tag)
 }
 
-func (f *Fixture) Packfile() billy.File {
+func (f *Fixture) Packfile() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.pack", f.PackfileHash))
 	if err != nil {
-		panic(err)
+		return nil, os.ErrNotExist
 	}
 
-	return file
+	return file, nil
 }
 
-func (f *Fixture) Idx() billy.File {
+func (f *Fixture) Idx() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.idx", f.PackfileHash))
 	if err != nil {
-		panic(err)
+		return nil, os.ErrNotExist
 	}
 
-	return file
+	return file, nil
 }
 
-func (f *Fixture) Rev() billy.File {
+func (f *Fixture) Rev() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.rev", f.PackfileHash))
 	if err != nil {
-		panic(err)
+		return nil, os.ErrNotExist
 	}
 
-	return file
+	return file, nil
 }
 
 // DotGit creates a new temporary directory and unpacks the repository .git

@@ -27,16 +27,31 @@ func (f *OSFixture) Is(tag string) bool {
 	return f.Fixture.Is(tag)
 }
 
-func (f *OSFixture) Packfile() billy.File {
-	return embedToOsfs(f.dir, f.Fixture.Packfile())
+func (f *OSFixture) Packfile() (billy.File, error) {
+	file, err := f.Fixture.Packfile()
+	if err != nil {
+		return nil, err
+	}
+
+	return embedToOsfs(f.dir, file)
 }
 
-func (f *OSFixture) Idx() billy.File {
-	return embedToOsfs(f.dir, f.Fixture.Idx())
+func (f *OSFixture) Idx() (billy.File, error) {
+	file, err := f.Fixture.Idx()
+	if err != nil {
+		return nil, err
+	}
+
+	return embedToOsfs(f.dir, file)
 }
 
-func (f *OSFixture) Rev() billy.File {
-	return embedToOsfs(f.dir, f.Fixture.Rev())
+func (f *OSFixture) Rev() (billy.File, error) {
+	file, err := f.Fixture.Rev()
+	if err != nil {
+		return nil, err
+	}
+
+	return embedToOsfs(f.dir, file)
 }
 
 func (f *OSFixture) DotGit(opts ...Option) billy.Filesystem {
@@ -65,25 +80,25 @@ func (f *OSFixture) Worktree(opts ...Option) billy.Filesystem {
 	return f.Fixture.Worktree(opts...)
 }
 
-func embedToOsfs(dir string, f billy.File) billy.File {
+func embedToOsfs(dir string, f billy.File) (billy.File, error) {
 	defer f.Close()
 
 	fs := osfs.New(dir)
 
 	out, err := fs.TempFile("", "embed")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	_, err = io.Copy(out, f)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	_, err = out.Seek(0, io.SeekStart)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return out
+	return out, nil
 }
