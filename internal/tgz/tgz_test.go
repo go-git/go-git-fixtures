@@ -51,9 +51,7 @@ func TestExtractError(t *testing.T) {
 				require.ErrorIs(t, err, os.ErrNotExist)
 			} else {
 				fs, err := tgz.MemFactory()
-				if err != nil {
-					panic(err)
-				}
+				require.NoError(t, err)
 
 				err = tgz.Extract(f, fs)
 				require.ErrorContains(t, err, tc.wantErr)
@@ -118,9 +116,7 @@ func TestExtract(t *testing.T) { //nolint
 				require.NoError(t, err)
 
 				fs, err := ff.factory()
-				if err != nil {
-					panic(err)
-				}
+				require.NoError(t, err)
 
 				err = tgz.Extract(f, fs)
 				require.NoError(t, err, "%s: unexpected error extracting: %s", tc.tgz, err)
