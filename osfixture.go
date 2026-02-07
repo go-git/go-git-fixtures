@@ -53,6 +53,7 @@ func (f *OSFixture) Clone() *OSFixture {
 			WorktreeHash: f.WorktreeHash,
 			ObjectsCount: f.ObjectsCount,
 			Tags:         slices.Clone(f.Tags),
+			ObjectFormat: f.ObjectFormat,
 		},
 		dir: f.dir,
 	}
