@@ -85,9 +85,9 @@ func TestByTag(t *testing.T) {
 		tag string
 		len int
 	}{
-		{tag: "packfile", len: 20},
+		{tag: "packfile", len: 21},
 		{tag: "ofs-delta", len: 3},
-		{tag: ".git", len: 12},
+		{tag: ".git", len: 13},
 		{tag: "merge-conflict", len: 1},
 		{tag: "worktree", len: 6},
 		{tag: "submodule", len: 1},
@@ -95,7 +95,6 @@ func TestByTag(t *testing.T) {
 		{tag: "notes", len: 1},
 		{tag: "multi-packfile", len: 1},
 		{tag: "diff-tree", len: 7},
-		{tag: "packfile-sha256", len: 1},
 	}
 
 	for _, tc := range tests {
@@ -215,6 +214,66 @@ func TestWithTargetDir(t *testing.T) {
 			stat, err := fs.Stat("config")
 			require.NoError(t, err)
 			assert.NotNil(t, stat)
+		})
+	}
+}
+
+func TestByObjectFormat(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		objectFormat string
+		tag          string
+		expectedLen  int
+	}{
+		{
+			name:         "sha1",
+			objectFormat: "sha1",
+			expectedLen:  37,
+		},
+		{
+			name:         "sha256",
+			objectFormat: "sha256",
+			expectedLen:  2,
+		},
+		{
+			name:         "sha1 with .git tag",
+			objectFormat: "sha1",
+			tag:          ".git",
+			expectedLen:  12,
+		},
+		{
+			name:         "sha256 with .git tag",
+			objectFormat: "sha256",
+			tag:          ".git",
+			expectedLen:  1,
+		},
+		{
+			name:         "sha1 with packfile tag",
+			objectFormat: "sha1",
+			tag:          "packfile",
+			expectedLen:  20,
+		},
+		{
+			name:         "sha256 with packfile tag",
+			objectFormat: "sha256",
+			tag:          "packfile",
+			expectedLen:  1,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			f := fixtures.ByObjectFormat(tc.objectFormat)
+
+			if tc.tag != "" {
+				f = f.ByTag(tc.tag)
+			}
+
+			assert.Len(t, f, tc.expectedLen)
 		})
 	}
 }
