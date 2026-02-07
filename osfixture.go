@@ -54,7 +54,7 @@ func (f *OSFixture) Rev() (billy.File, error) {
 	return embedToOsfs(f.dir, file)
 }
 
-func (f *OSFixture) DotGit(opts ...Option) billy.Filesystem {
+func (f *OSFixture) DotGit(opts ...Option) (billy.Filesystem, error) {
 	return f.Fixture.DotGit(opts...)
 }
 
@@ -76,7 +76,7 @@ func (f *OSFixture) Clone() *OSFixture {
 	return nf
 }
 
-func (f *OSFixture) Worktree(opts ...Option) billy.Filesystem {
+func (f *OSFixture) Worktree(opts ...Option) (billy.Filesystem, error) {
 	return f.Fixture.Worktree(opts...)
 }
 
