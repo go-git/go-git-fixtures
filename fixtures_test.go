@@ -30,13 +30,9 @@ func TestEmbeddedFiles(t *testing.T) {
 
 	for i, f := range fixtures.All() {
 		if f.PackfileHash != "" {
-			if f.Packfile() == nil {
-				assert.Fail(t, "failed to get pack file", i)
-			}
-			// skip pack file ee4fef0 as it does not have an idx file.
-			if f.PackfileHash != "ee4fef0ef8be5053ebae4ce75acf062ddf3031fb" && f.Idx() == nil {
-				assert.Fail(t, "failed to get idx file", i)
-			}
+			file, err := f.Packfile()
+			require.NoError(t, err)
+			assert.NotNil(t, file, "failed to get pack file", i)
 		}
 
 		if f.WorktreeHash != "" {
@@ -64,10 +60,12 @@ func TestEmbeddedFiles(t *testing.T) {
 func TestRevFiles(t *testing.T) {
 	t.Parallel()
 
-	f := fixtures.ByTag("packfile-sha256").One()
+	f := fixtures.ByTag("rev").One()
+	require.NotNil(t, f)
 
-	assert.NotNil(t, f)
-	assert.NotNil(t, f.Rev(), "failed to get rev file")
+	file, err := f.Rev()
+	require.NoError(t, err)
+	assert.NotNil(t, file, "failed to get rev file")
 }
 
 func TestAll(t *testing.T) {
@@ -149,10 +147,11 @@ func TestIdx(t *testing.T) {
 		t.Run("#"+strconv.Itoa(i), func(t *testing.T) {
 			t.Parallel()
 
-			index := f.Idx()
-			assert.NotNil(t, index)
+			index, err := f.Idx()
+			require.NoError(t, err)
+			require.NotNil(t, index)
 
-			err := index.Close()
+			err = index.Close()
 			assert.NoError(t, err)
 		})
 	}
