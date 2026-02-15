@@ -6,7 +6,7 @@ git repository fixtures used by [go-git](https://github.com/go-git/go-git)
 
 ### Adding new pack fixtures
 
-1. Get the `.idx` and `.pack` files from the repository:
+1. Get the `.idx`, `.rev` and `.pack` files from the repository:
 
 ```sh
 git clone https://<repository>
@@ -40,7 +40,7 @@ git gc
 tar -czf git.tgz -C .git .
 ```
 
-2. Get the sha1 of the file: `shasum < git-.tgz`.
+2. Get the sha1 of the file: `shasum < git.tgz`.
 3. Move the file using the checksum to `data/git-<checksum>.tgz`
 4. Add a new entry in `fixtures.go`:
 

@@ -1,6 +1,7 @@
 package fixtures_test
 
 import (
+	"io"
 	"strconv"
 	"testing"
 
@@ -13,50 +14,49 @@ import (
 func TestDotGit(t *testing.T) {
 	t.Parallel()
 
-	fs := fixtures.Basic().One().DotGit(fixtures.WithTargetDir(t.TempDir))
+	fs, err := fixtures.Basic().One().DotGit(fixtures.WithTargetDir(t.TempDir))
+	require.NoError(t, err)
+
 	files, err := fs.ReadDir("/")
 	require.NoError(t, err)
 	assert.Greater(t, len(files), 1)
 
-	fs = fixtures.Basic().One().DotGit(fixtures.WithMemFS())
+	fs, err = fixtures.Basic().One().DotGit(fixtures.WithMemFS())
+	require.NoError(t, err)
+
 	files, err = fs.ReadDir("/")
 	require.NoError(t, err)
 	assert.Greater(t, len(files), 1)
 }
 
-//nolint:cyclop
 func TestEmbeddedFiles(t *testing.T) {
 	t.Parallel()
 
 	for i, f := range fixtures.All() {
 		if f.PackfileHash != "" {
-			if f.Packfile() == nil {
-				assert.Fail(t, "failed to get pack file", i)
-			}
-			// skip pack file ee4fef0 as it does not have an idx file.
-			if f.PackfileHash != "ee4fef0ef8be5053ebae4ce75acf062ddf3031fb" && f.Idx() == nil {
-				assert.Fail(t, "failed to get idx file", i)
-			}
+			file, err := f.Packfile()
+			require.NoError(t, err)
+			assert.NotNil(t, file, "failed to get pack file", i)
 		}
 
 		if f.WorktreeHash != "" {
-			if f.Worktree(fixtures.WithMemFS()) == nil {
-				assert.Fail(t, "[mem] failed to get worktree", i)
-			}
+			wt, err := f.Worktree(fixtures.WithMemFS())
+			require.NoError(t, err)
+			assert.NotNil(t, wt, "[mem] failed to get worktree", i)
 
-			if f.Worktree(fixtures.WithTargetDir(t.TempDir)) == nil {
-				assert.Fail(t, "[tempdir] failed to get worktree", i)
-			}
+			wt, err = f.Worktree(fixtures.WithTargetDir(t.TempDir))
+			require.NoError(t, err)
+			assert.NotNil(t, wt, "[tempdir] failed to get worktree", i)
 		}
 
 		if f.DotGitHash != "" {
-			if f.DotGit(fixtures.WithMemFS()) == nil {
-				assert.Fail(t, "[mem] failed to get dotgit", i)
-			}
+			dot, err := f.DotGit(fixtures.WithMemFS())
+			require.NoError(t, err)
+			assert.NotNil(t, dot, "[mem] failed to get dotgit", i)
 
-			if f.DotGit(fixtures.WithTargetDir(t.TempDir)) == nil {
-				assert.Fail(t, "[tempdir] failed to get dotgit", i)
-			}
+			dot, err = f.DotGit(fixtures.WithTargetDir(t.TempDir))
+			require.NoError(t, err)
+			assert.NotNil(t, dot, "[tempdir] failed to get dotgit", i)
 		}
 	}
 }
@@ -64,10 +64,12 @@ func TestEmbeddedFiles(t *testing.T) {
 func TestRevFiles(t *testing.T) {
 	t.Parallel()
 
-	f := fixtures.ByTag("packfile-sha256").One()
+	f := fixtures.ByTag("rev").One()
+	require.NotNil(t, f)
 
-	assert.NotNil(t, f)
-	assert.NotNil(t, f.Rev(), "failed to get rev file")
+	file, err := f.Rev()
+	require.NoError(t, err)
+	assert.NotNil(t, file, "failed to get rev file")
 }
 
 func TestAll(t *testing.T) {
@@ -85,9 +87,9 @@ func TestByTag(t *testing.T) {
 		tag string
 		len int
 	}{
-		{tag: "packfile", len: 20},
+		{tag: "packfile", len: 21},
 		{tag: "ofs-delta", len: 3},
-		{tag: ".git", len: 12},
+		{tag: ".git", len: 13},
 		{tag: "merge-conflict", len: 1},
 		{tag: "worktree", len: 6},
 		{tag: "submodule", len: 1},
@@ -95,7 +97,6 @@ func TestByTag(t *testing.T) {
 		{tag: "notes", len: 1},
 		{tag: "multi-packfile", len: 1},
 		{tag: "diff-tree", len: 7},
-		{tag: "packfile-sha256", len: 1},
 	}
 
 	for _, tc := range tests {
@@ -150,10 +151,11 @@ func TestIdx(t *testing.T) {
 		t.Run("#"+strconv.Itoa(i), func(t *testing.T) {
 			t.Parallel()
 
-			index := f.Idx()
-			assert.NotNil(t, index)
+			index, err := f.Idx()
+			require.NoError(t, err)
+			require.NotNil(t, index)
 
-			err := index.Close()
+			err = index.Close()
 			assert.NoError(t, err)
 		})
 	}
@@ -165,7 +167,8 @@ func TestWithMemFS(t *testing.T) {
 	f := fixtures.Basic().One()
 	require.NotNil(t, f)
 
-	fs := f.DotGit(fixtures.WithMemFS())
+	fs, err := f.DotGit(fixtures.WithMemFS())
+	require.NoError(t, err)
 	require.NotNil(t, fs)
 
 	files, err := fs.ReadDir("/")
@@ -205,7 +208,8 @@ func TestWithTargetDir(t *testing.T) {
 			f := fixtures.Basic().One()
 			require.NotNil(t, f)
 
-			fs := f.DotGit(fixtures.WithTargetDir(t.TempDir, tc.options...))
+			fs, err := f.DotGit(fixtures.WithTargetDir(t.TempDir, tc.options...))
+			require.NoError(t, err)
 			require.NotNil(t, fs)
 
 			files, err := fs.ReadDir("/")
@@ -217,4 +221,89 @@ func TestWithTargetDir(t *testing.T) {
 			assert.NotNil(t, stat)
 		})
 	}
+}
+
+func TestByObjectFormat(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		objectFormat string
+		tag          string
+		expectedLen  int
+	}{
+		{
+			name:         "sha1",
+			objectFormat: "sha1",
+			expectedLen:  37,
+		},
+		{
+			name:         "sha256",
+			objectFormat: "sha256",
+			expectedLen:  2,
+		},
+		{
+			name:         "sha1 with .git tag",
+			objectFormat: "sha1",
+			tag:          ".git",
+			expectedLen:  12,
+		},
+		{
+			name:         "sha256 with .git tag",
+			objectFormat: "sha256",
+			tag:          ".git",
+			expectedLen:  1,
+		},
+		{
+			name:         "sha1 with packfile tag",
+			objectFormat: "sha1",
+			tag:          "packfile",
+			expectedLen:  20,
+		},
+		{
+			name:         "sha256 with packfile tag",
+			objectFormat: "sha256",
+			tag:          "packfile",
+			expectedLen:  1,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			f := fixtures.ByObjectFormat(tc.objectFormat)
+
+			if tc.tag != "" {
+				f = f.ByTag(tc.tag)
+			}
+
+			assert.Len(t, f, tc.expectedLen)
+		})
+	}
+}
+
+func TestEnsureIsBare(t *testing.T) {
+	t.Parallel()
+
+	f := fixtures.Basic().One()
+	require.NotNil(t, f)
+
+	fs, err := f.DotGit(fixtures.WithMemFS())
+	require.NoError(t, err)
+
+	err = fixtures.EnsureIsBare(fs)
+	require.NoError(t, err)
+
+	cfg, err := fs.Open("config")
+	require.NoError(t, err)
+
+	t.Cleanup(func() {
+		cfg.Close()
+	})
+
+	content, err := io.ReadAll(cfg)
+	require.NoError(t, err)
+
+	assert.Contains(t, string(content), "bare = true")
 }

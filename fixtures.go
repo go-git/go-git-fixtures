@@ -28,6 +28,7 @@ var fixtures = Fixtures{{
 	PackfileHash: "135fe3d1ad828afe68706f1d481aedbcfa7a86d2",
 	DotGitHash:   "78c5fb882e76286d8201016cffee63ea7060a0c2",
 	ObjectsCount: 68,
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"packfile", "ofs-delta", ".git"},
 	URL:          "https://github.com/git-fixtures/basic.git",
@@ -35,48 +36,58 @@ var fixtures = Fixtures{{
 	PackfileHash: "a3fed42da1e8189a077c0e6846c040dcf73fc9dd",
 	DotGitHash:   "7a725350b88b05ca03541b59dd0649fda7f521f2",
 	ObjectsCount: 31,
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "ref-delta", ".git"},
+	Tags:         []string{"packfile", "ref-delta", ".git", "rev"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "c544593473465e6315ad4182d04d366c4592b829",
 	DotGitHash:   "7cbde0ca02f13aedd5ec8b358ca17b1c0bf5ee64",
 	ObjectsCount: 31,
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "ofs-delta", ".git", "single-branch"},
+	Tags:         []string{"packfile", "ofs-delta", ".git", "single-branch", "rev"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "61f0ee9c75af1f9678e6f76ff39fbe372b6f1c45",
 	DotGitHash:   "21504f6d2cc2ef0c9d6ebb8802c7b49abae40c1a",
 	ObjectsCount: 28,
+	ObjectFormat: "sha1",
 }, {
-	Tags:       []string{".git", "merge-conflict"},
-	URL:        "https://github.com/git-fixtures/basic.git",
-	DotGitHash: "4870d54b5b04e43da8cf99ceec179d9675494af8",
+	Tags:         []string{".git", "merge-conflict"},
+	URL:          "https://github.com/git-fixtures/basic.git",
+	DotGitHash:   "4870d54b5b04e43da8cf99ceec179d9675494af8",
+	ObjectFormat: "sha1",
 }, {
-	Tags:       []string{".git", "resolve-undo"},
-	URL:        "https://github.com/git-fixtures/basic.git",
-	DotGitHash: "df6781fd40b8f4911d70ce71f8387b991615cd6d",
+	Tags:         []string{".git", "resolve-undo"},
+	URL:          "https://github.com/git-fixtures/basic.git",
+	DotGitHash:   "df6781fd40b8f4911d70ce71f8387b991615cd6d",
+	ObjectFormat: "sha1",
 }, {
-	Tags:       []string{".git", "intent-to-add"},
-	URL:        "https://github.com/git-fixtures/basic.git",
-	DotGitHash: "4e7600af05c3356e8b142263e127b76f010facfc",
+	Tags:         []string{".git", "intent-to-add"},
+	URL:          "https://github.com/git-fixtures/basic.git",
+	DotGitHash:   "4e7600af05c3356e8b142263e127b76f010facfc",
+	ObjectFormat: "sha1",
 }, {
-	Tags:       []string{".git", "index-v4"},
-	URL:        "https://github.com/git-fixtures/basic.git",
-	DotGitHash: "935e5ac17c41c309c356639816ea0694a568c484",
+	Tags:         []string{".git", "index-v4"},
+	URL:          "https://github.com/git-fixtures/basic.git",
+	DotGitHash:   "935e5ac17c41c309c356639816ea0694a568c484",
+	ObjectFormat: "sha1",
 }, {
-	Tags:       []string{".git", "end-of-index-entry"},
-	URL:        "https://github.com/git-fixtures/basic.git",
-	DotGitHash: "ab06771a67110b976953d34400d4dbc465ccd2d9",
+	Tags:         []string{".git", "end-of-index-entry"},
+	URL:          "https://github.com/git-fixtures/basic.git",
+	DotGitHash:   "ab06771a67110b976953d34400d4dbc465ccd2d9",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"worktree"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	WorktreeHash: "d2e42ddd68eacbb6034e7724e0dd4117ff1f01ee",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"worktree", "submodule"},
 	URL:          "https://github.com/git-fixtures/submodule.git",
 	WorktreeHash: "8b4d55c85677b6b94bef2e46832ed2174ed6ecaf",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"packfile", ".git", "unpacked", "multi-packfile"},
 	URL:          "https://github.com/src-d/go-git.git",
@@ -84,6 +95,7 @@ var fixtures = Fixtures{{
 	PackfileHash: "3559b3b47e695b33b0913237a4df3357e739831c",
 	DotGitHash:   "174be6bd4292c18160542ae6dc6704b877b8a01a",
 	ObjectsCount: 2133,
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"packfile", ".git", "tags"},
 	URL:          "https://github.com/git-fixtures/tags.git",
@@ -91,112 +103,140 @@ var fixtures = Fixtures{{
 	DotGitHash:   "c0c7c57ab1753ddbd26cc45322299ddd12842794",
 	PackfileHash: "b68617dd8637fe6409d9842825a843a1d9a6e484",
 	ObjectsCount: 7,
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile"},
+	Tags:         []string{"packfile", "rev"},
 	URL:          "https://github.com/spinnaker/spinnaker.git",
 	Head:         "06ce06d0fc49646c4de733c45b7788aabad98a6f",
 	PackfileHash: "f2e0a8889a746f7600e07d2246a2e29a72f696be",
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile"},
+	Tags:         []string{"packfile", "rev"},
 	URL:          "https://github.com/jamesob/desk.git",
 	Head:         "d2313db6e7ca7bac79b819d767b2a1449abb0a5d",
 	PackfileHash: "4ec6344877f494690fc800aceaf2ca0e86786acb",
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "empty-folder"},
+	Tags:         []string{"packfile", "empty-folder", "rev"},
 	URL:          "https://github.com/cpcs499/Final_Pres_P.git",
 	Head:         "70bade703ce556c2c7391a8065c45c943e8b6bc3",
 	PackfileHash: "29f304662fd64f102d94722cf5bd8802d9a9472c",
 	DotGitHash:   "e1580a78f7d36791249df76df8a2a2613d629902",
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree"},
+	Tags:         []string{"packfile", "diff-tree", "rev"},
 	URL:          "https://github.com/github/gem-builder.git",
 	PackfileHash: "1ea0b3971fd64fdcdf3282bfb58e8cf10095e4e6",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"packfile", "diff-tree"},
 	URL:          "https://github.com/githubtraining/example-branches.git",
 	PackfileHash: "bb8ee94710d3fa39379a630f76812c187217b312",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"packfile", "diff-tree"},
 	URL:          "https://github.com/rumpkernel/rumprun-xen.git",
 	PackfileHash: "7861f2632868833a35fe5e4ab94f99638ec5129b",
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree"},
+	Tags:         []string{"packfile", "diff-tree", "rev"},
 	URL:          "https://github.com/mcuadros/skeetr.git",
 	PackfileHash: "36ef7a2296bfd526020340d27c5e1faa805d8d38",
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree"},
+	Tags:         []string{"packfile", "diff-tree", "rev"},
 	URL:          "https://github.com/dezfowler/LiteMock.git",
 	PackfileHash: "0d9b6cfc261785837939aaede5986d7a7c212518",
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree"},
+	Tags:         []string{"packfile", "diff-tree", "rev"},
 	URL:          "https://github.com/tyba/storable.git",
 	PackfileHash: "0d3d824fb5c930e7e7e1f0f399f2976847d31fd3",
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree"},
+	Tags:         []string{"packfile", "diff-tree", "rev"},
 	URL:          "https://github.com/toqueteos/ts3.git",
 	PackfileHash: "21b33a26eb7ffbd35261149fe5d886b9debab7cb",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"empty", ".git"},
 	URL:          "https://github.com/git-fixtures/empty.git",
 	DotGitHash:   "bf3fedcc8e20fd0dec9172987ceea0038d17b516",
 	ObjectsCount: 0,
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"worktree", "alternates"},
 	WorktreeHash: "a6b6ff89c593f042347113203ead1c14ab5733ce",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"worktree", "dirty"},
 	WorktreeHash: "7203669c66103305e56b9dcdf940a7fbeb515f28",
+	ObjectFormat: "sha1",
 }, {
 	// standalone packfile that does not have any dependencies nor is part of any other fixture repo.
 	Tags:         []string{"packfile", "standalone"},
 	PackfileHash: "3638209d310e10ea8d90c362d568be65dd5e03a6",
+	ObjectFormat: "sha1",
 }, {
 	// adds commit on top of spinnaker fixture 06ce06d0fc49646c4de733c45b7788aabad98a6f via a thin pack.
 	Tags:         []string{"thinpack"},
 	PackfileHash: "ee4fef0ef8be5053ebae4ce75acf062ddf3031fb",
 	Head:         "ee372bb08322c1e6e7c6c4f953cc6bf72784e7fb", // the thin pack adds this commit.
+	ObjectFormat: "sha1",
 }, {
-	Tags:       []string{"merge-base"},
-	DotGitHash: "26baa505b9f6fb2024b9999c140b75514718c988",
+	Tags:         []string{"merge-base"},
+	DotGitHash:   "26baa505b9f6fb2024b9999c140b75514718c988",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"commit-graph"},
 	Head:         "b9d69064b190e7aedccf84731ca1d917871f8a1c",
 	PackfileHash: "769137af7784db501bca677fbd56fef8b52515b7",
 	DotGitHash:   "cf717ccadce761d60bb4a8557a7b9a2efd23816a",
 	ObjectsCount: 31,
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"commit-graph-chain"},
 	Head:         "b9d69064b190e7aedccf84731ca1d917871f8a1c",
 	PackfileHash: "769137af7784db501bca677fbd56fef8b52515b7",
 	DotGitHash:   "00a1fc100787506f842e55511994f08df2c2cd66",
 	ObjectsCount: 31,
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"commit-graph-chain-2"},
+	Tags:         []string{"commit-graph-chain-2", "rev"},
 	Head:         "ec6f456c0e8c7058a29611429965aa05c190b54b",
 	PackfileHash: "06ede69e9eba9f1af36eeee184402dc3ad705cd7",
 	DotGitHash:   "77b6511a6e67c99162ebcecd2763a9a19a7ad429",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"worktree", "linked-worktree"},
 	WorktreeHash: "363d996b02d9c3b598f0176619f5c6a44a82480a",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"worktree", "main-branch", "no-master-head"},
 	WorktreeHash: "e3b91f99d8d050cac81d84fbef89172f58eeb745",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"packfile", "codecommit"},
 	PackfileHash: "9733763ae7ee6efcf452d373d6fff77424fb1dcc",
+	ObjectFormat: "sha1",
 }, {
 	Tags:         []string{"packfile", "delta-before-base"},
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
+	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile-sha256"},
+	Tags:         []string{"packfile-sha256", "packfile", "rev"}, // Drop packfile-sha256 as part of V6.
 	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
+	ObjectsCount: 5,
+	ObjectFormat: "sha256",
 }, {
 	Tags:         []string{"packfile", "notes"},
 	PackfileHash: "bc4b855a55cae7703c023d4e36e3a7c9f5d84491",
+	ObjectFormat: "sha1",
 }, {
-	Tags:       []string{".git-sha256"},
-	URL:        "https://gitlab.com/pjbgf/sha256.git",
-	DotGitHash: "40143428b59fe03546fabba0603268bba3b3c58b",
+	Tags:         []string{".git-sha256", ".git"}, // Drop .git-sha256 as part of V6.
+	URL:          "https://gitlab.com/pjbgf/sha256.git",
+	DotGitHash:   "40143428b59fe03546fabba0603268bba3b3c58b",
+	ObjectFormat: "sha256",
 }}
 
 func All() Fixtures {
@@ -221,77 +261,97 @@ func ByTag(tag string) Fixtures {
 	return fixtures.ByTag(tag)
 }
 
+func ByObjectFormat(format string) Fixtures {
+	return fixtures.ByObjectFormat(format)
+}
+
+// Fixture represents a Git repository test fixture that can be used for testing
+// Git operations. Each fixture contains metadata about a repository and may
+// provide access to some of its files, such as packfile, index, and/or .git
+// directory contents.
 type Fixture struct {
-	URL          string
-	Tags         []string
-	Head         string
+	// URL is the original repository URL from which this fixture was created.
+	URL string
+	// Tags are labels used to categorize and filter fixtures (e.g., "packfile", ".git", "worktree").
+	Tags []string
+	// Head is the commit hash that HEAD points to in this fixture.
+	Head string
+	// PackfileHash is the hash identifier for the fixture's packfile data.
 	PackfileHash string
-	DotGitHash   string
+	// DotGitHash is the hash identifier for the archived .git directory.
+	DotGitHash string
+	// WorktreeHash is the hash identifier for the archived worktree.
 	WorktreeHash string
+	// ObjectsCount is the number of git objects in this fixture.
 	ObjectsCount int32
+	// ObjectFormat specifies the object hash algorithm (e.g., "sha1" or "sha256").
+	ObjectFormat string
 }
 
 func (f *Fixture) Is(tag string) bool {
 	return slices.Contains(f.Tags, tag)
 }
 
-func (f *Fixture) Packfile() billy.File {
+func (f *Fixture) Packfile() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.pack", f.PackfileHash))
 	if err != nil {
-		panic(err)
+		return nil, os.ErrNotExist
 	}
 
-	return file
+	return file, nil
 }
 
-func (f *Fixture) Idx() billy.File {
+func (f *Fixture) Idx() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.idx", f.PackfileHash))
 	if err != nil {
-		panic(err)
+		return nil, os.ErrNotExist
 	}
 
-	return file
+	return file, nil
 }
 
-func (f *Fixture) Rev() billy.File {
+func (f *Fixture) Rev() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.rev", f.PackfileHash))
 	if err != nil {
-		panic(err)
+		return nil, os.ErrNotExist
 	}
 
-	return file
+	return file, nil
 }
 
 // DotGit creates a new temporary directory and unpacks the repository .git
 // directory into it. Multiple calls to DotGit returns different directories.
-func (f *Fixture) DotGit(opts ...Option) billy.Filesystem {
+func (f *Fixture) DotGit(opts ...Option) (billy.Filesystem, error) {
 	o := newOptions()
 	for _, opt := range opts {
 		opt(o)
 	}
 
 	if f.DotGitHash == "" && f.WorktreeHash != "" {
-		fs, _ := f.Worktree(opts...).Chroot(".git")
+		fs, err := f.Worktree(opts...)
+		if err != nil {
+			return nil, err
+		}
 
-		return fs
+		return fs.Chroot(".git")
 	}
 
 	file, err := Filesystem.Open(fmt.Sprintf("data/git-%s.tgz", f.DotGitHash))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	fs, err := o.fsFactory()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = tgz.Extract(file, fs)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return fs
+	return fs, nil
 }
 
 func (f *Fixture) Clone() *Fixture {
@@ -303,6 +363,7 @@ func (f *Fixture) Clone() *Fixture {
 		WorktreeHash: f.WorktreeHash,
 		ObjectsCount: f.ObjectsCount,
 		Tags:         slices.Clone(f.Tags),
+		ObjectFormat: f.ObjectFormat,
 	}
 
 	return nf
@@ -336,7 +397,7 @@ func EnsureIsBare(fs billy.Filesystem) error {
 	return err
 }
 
-func (f *Fixture) Worktree(opts ...Option) billy.Filesystem {
+func (f *Fixture) Worktree(opts ...Option) (billy.Filesystem, error) {
 	o := newOptions()
 	for _, opt := range opts {
 		opt(o)
@@ -344,20 +405,20 @@ func (f *Fixture) Worktree(opts ...Option) billy.Filesystem {
 
 	file, err := Filesystem.Open(fmt.Sprintf("data/worktree-%s.tgz", f.WorktreeHash))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	fs, err := o.fsFactory()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = tgz.Extract(file, fs)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return fs
+	return fs, nil
 }
 
 type Fixtures []*Fixture
@@ -386,6 +447,17 @@ func (g Fixtures) ByTag(tag string) Fixtures {
 	r := make(Fixtures, 0, len(g))
 	for _, f := range g {
 		if f.Is(tag) {
+			r = append(r, f.Clone())
+		}
+	}
+
+	return r
+}
+
+func (g Fixtures) ByObjectFormat(format string) Fixtures {
+	r := make(Fixtures, 0, len(g))
+	for _, f := range g {
+		if f.ObjectFormat == format {
 			r = append(r, f.Clone())
 		}
 	}
