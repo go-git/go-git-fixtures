@@ -295,7 +295,7 @@ func (f *Fixture) Is(tag string) bool {
 func (f *Fixture) Packfile() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.pack", f.PackfileHash))
 	if err != nil {
-		return nil, os.ErrNotExist
+		return nil, fmt.Errorf("%w: %w", os.ErrNotExist, err)
 	}
 
 	return file, nil
@@ -304,7 +304,7 @@ func (f *Fixture) Packfile() (billy.File, error) {
 func (f *Fixture) Idx() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.idx", f.PackfileHash))
 	if err != nil {
-		return nil, os.ErrNotExist
+		return nil, fmt.Errorf("%w: %w", os.ErrNotExist, err)
 	}
 
 	return file, nil
@@ -313,7 +313,7 @@ func (f *Fixture) Idx() (billy.File, error) {
 func (f *Fixture) Rev() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.rev", f.PackfileHash))
 	if err != nil {
-		return nil, os.ErrNotExist
+		return nil, fmt.Errorf("%w: %w", os.ErrNotExist, err)
 	}
 
 	return file, nil
