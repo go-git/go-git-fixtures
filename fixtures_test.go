@@ -2,6 +2,7 @@ package fixtures_test
 
 import (
 	"io"
+	"slices"
 	"strconv"
 	"testing"
 
@@ -37,6 +38,20 @@ func TestEmbeddedFiles(t *testing.T) {
 			file, err := f.Packfile()
 			require.NoError(t, err)
 			assert.NotNil(t, file, "failed to get pack file", i)
+
+			if slices.Contains(f.Tags, "packfile") {
+				idx, err := f.Idx()
+				require.NoError(t, err)
+				t.Cleanup(func() { idx.Close() })
+
+				assert.NotNil(t, idx, "failed to get idx file", i)
+
+				rev, err := f.Rev()
+				require.NoError(t, err)
+				t.Cleanup(func() { rev.Close() })
+
+				assert.NotNil(t, rev, "failed to get rev file", i)
+			}
 		}
 
 		if f.WorktreeHash != "" {
