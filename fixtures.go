@@ -22,7 +22,7 @@ var data embed.FS
 
 //nolint:gochecknoglobals
 var fixtures = Fixtures{{
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git", "root-reference"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git", "root-reference", "index-ext-tree"},
 	URL:          "https://github.com/git-fixtures/root-references.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "135fe3d1ad828afe68706f1d481aedbcfa7a86d2",
@@ -30,7 +30,7 @@ var fixtures = Fixtures{{
 	ObjectsCount: 68,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git", "index-ext-tree"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "a3fed42da1e8189a077c0e6846c040dcf73fc9dd",
@@ -46,7 +46,7 @@ var fixtures = Fixtures{{
 	ObjectsCount: 31,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git", "single-branch", "rev-v1"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git", "single-branch", "rev-v1", "index-ext-tree"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "61f0ee9c75af1f9678e6f76ff39fbe372b6f1c45",
@@ -54,27 +54,27 @@ var fixtures = Fixtures{{
 	ObjectsCount: 28,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{".git", "merge-conflict", "index-v2"},
+	Tags:         []string{".git", "merge-conflict", "index-v2", "index-ext-none"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	DotGitHash:   "4870d54b5b04e43da8cf99ceec179d9675494af8",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{".git", "resolve-undo", "index-v2"},
+	Tags:         []string{".git", "resolve-undo", "index-v2", "index-ext-reuc"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	DotGitHash:   "df6781fd40b8f4911d70ce71f8387b991615cd6d",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{".git", "intent-to-add", "index-v3"},
+	Tags:         []string{".git", "intent-to-add", "index-v3", "index-ext-tree"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	DotGitHash:   "4e7600af05c3356e8b142263e127b76f010facfc",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{".git", "index-v4"},
+	Tags:         []string{".git", "index-v4", "index-ext-tree"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	DotGitHash:   "935e5ac17c41c309c356639816ea0694a568c484",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{".git", "end-of-index-entry", "index-v2"},
+	Tags:         []string{".git", "end-of-index-entry", "index-v2", "index-ext-eoie", "index-ext-tree"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	DotGitHash:   "ab06771a67110b976953d34400d4dbc465ccd2d9",
 	ObjectFormat: "sha1",
@@ -89,7 +89,7 @@ var fixtures = Fixtures{{
 	WorktreeHash: "8b4d55c85677b6b94bef2e46832ed2174ed6ecaf",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "unpacked", "multi-packfile"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "unpacked", "multi-packfile", "index-ext-tree"},
 	URL:          "https://github.com/src-d/go-git.git",
 	Head:         "e8788ad9165781196e917292d6055cba1d78664e",
 	PackfileHash: "3559b3b47e695b33b0913237a4df3357e739831c",
@@ -97,7 +97,7 @@ var fixtures = Fixtures{{
 	ObjectsCount: 2133,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "tags"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "tags", "index-ext-tree"},
 	URL:          "https://github.com/git-fixtures/tags.git",
 	Head:         "f7b877701fbf855b44c0a9e86f3fdce2c298b07f",
 	DotGitHash:   "c0c7c57ab1753ddbd26cc45322299ddd12842794",
@@ -117,7 +117,7 @@ var fixtures = Fixtures{{
 	PackfileHash: "4ec6344877f494690fc800aceaf2ca0e86786acb",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "empty-folder", "rev-v1"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "empty-folder", "rev-v1", "index-ext-tree"},
 	URL:          "https://github.com/cpcs499/Final_Pres_P.git",
 	Head:         "70bade703ce556c2c7391a8065c45c943e8b6bc3",
 	PackfileHash: "29f304662fd64f102d94722cf5bd8802d9a9472c",
@@ -184,25 +184,25 @@ var fixtures = Fixtures{{
 	Head:         "ee372bb08322c1e6e7c6c4f953cc6bf72784e7fb", // the thin pack adds this commit.
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"merge-base", "index-v2"},
+	Tags:         []string{"merge-base", "index-v2", "index-ext-reuc", "index-ext-tree"},
 	DotGitHash:   "26baa505b9f6fb2024b9999c140b75514718c988",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"commit-graph", "index-v2"},
+	Tags:         []string{"commit-graph", "index-v2", "index-ext-tree"},
 	Head:         "b9d69064b190e7aedccf84731ca1d917871f8a1c",
 	PackfileHash: "769137af7784db501bca677fbd56fef8b52515b7",
 	DotGitHash:   "cf717ccadce761d60bb4a8557a7b9a2efd23816a",
 	ObjectsCount: 31,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"commit-graph-chain", "index-v2"},
+	Tags:         []string{"commit-graph-chain", "index-v2", "index-ext-tree"},
 	Head:         "b9d69064b190e7aedccf84731ca1d917871f8a1c",
 	PackfileHash: "769137af7784db501bca677fbd56fef8b52515b7",
 	DotGitHash:   "00a1fc100787506f842e55511994f08df2c2cd66",
 	ObjectsCount: 31,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"commit-graph-chain-2", "rev-v1", "index-v2"},
+	Tags:         []string{"commit-graph-chain-2", "rev-v1", "index-v2", "index-ext-tree"},
 	Head:         "ec6f456c0e8c7058a29611429965aa05c190b54b",
 	PackfileHash: "06ede69e9eba9f1af36eeee184402dc3ad705cd7",
 	DotGitHash:   "77b6511a6e67c99162ebcecd2763a9a19a7ad429",
@@ -233,7 +233,7 @@ var fixtures = Fixtures{{
 	PackfileHash: "bc4b855a55cae7703c023d4e36e3a7c9f5d84491",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{".git-sha256", ".git", "index-v2"}, // Drop .git-sha256 as part of V6.
+	Tags:         []string{".git-sha256", ".git", "index-v2", "index-ext-tree"}, // Drop .git-sha256 as part of V6.
 	URL:          "https://gitlab.com/pjbgf/sha256.git",
 	DotGitHash:   "40143428b59fe03546fabba0603268bba3b3c58b",
 	ObjectFormat: "sha256",
