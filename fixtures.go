@@ -22,7 +22,7 @@ var data embed.FS
 
 //nolint:gochecknoglobals
 var fixtures = Fixtures{{
-	Tags:         []string{"packfile", "ofs-delta", ".git", "root-reference"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "ofs-delta", ".git", "root-reference"},
 	URL:          "https://github.com/git-fixtures/root-references.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "135fe3d1ad828afe68706f1d481aedbcfa7a86d2",
@@ -30,7 +30,7 @@ var fixtures = Fixtures{{
 	ObjectsCount: 68,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "ofs-delta", ".git"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "ofs-delta", ".git"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "a3fed42da1e8189a077c0e6846c040dcf73fc9dd",
@@ -38,7 +38,7 @@ var fixtures = Fixtures{{
 	ObjectsCount: 31,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "ref-delta", ".git", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "ref-delta", ".git", "rev-v1"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "c544593473465e6315ad4182d04d366c4592b829",
@@ -46,7 +46,7 @@ var fixtures = Fixtures{{
 	ObjectsCount: 31,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "ofs-delta", ".git", "single-branch", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "ofs-delta", ".git", "single-branch", "rev-v1"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "61f0ee9c75af1f9678e6f76ff39fbe372b6f1c45",
@@ -89,7 +89,7 @@ var fixtures = Fixtures{{
 	WorktreeHash: "8b4d55c85677b6b94bef2e46832ed2174ed6ecaf",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", ".git", "unpacked", "multi-packfile"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", ".git", "unpacked", "multi-packfile"},
 	URL:          "https://github.com/src-d/go-git.git",
 	Head:         "e8788ad9165781196e917292d6055cba1d78664e",
 	PackfileHash: "3559b3b47e695b33b0913237a4df3357e739831c",
@@ -97,7 +97,7 @@ var fixtures = Fixtures{{
 	ObjectsCount: 2133,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", ".git", "tags"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", ".git", "tags"},
 	URL:          "https://github.com/git-fixtures/tags.git",
 	Head:         "f7b877701fbf855b44c0a9e86f3fdce2c298b07f",
 	DotGitHash:   "c0c7c57ab1753ddbd26cc45322299ddd12842794",
@@ -105,56 +105,56 @@ var fixtures = Fixtures{{
 	ObjectsCount: 7,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "rev-v1"},
 	URL:          "https://github.com/spinnaker/spinnaker.git",
 	Head:         "06ce06d0fc49646c4de733c45b7788aabad98a6f",
 	PackfileHash: "f2e0a8889a746f7600e07d2246a2e29a72f696be",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "rev-v1"},
 	URL:          "https://github.com/jamesob/desk.git",
 	Head:         "d2313db6e7ca7bac79b819d767b2a1449abb0a5d",
 	PackfileHash: "4ec6344877f494690fc800aceaf2ca0e86786acb",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "empty-folder", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "empty-folder", "rev-v1"},
 	URL:          "https://github.com/cpcs499/Final_Pres_P.git",
 	Head:         "70bade703ce556c2c7391a8065c45c943e8b6bc3",
 	PackfileHash: "29f304662fd64f102d94722cf5bd8802d9a9472c",
 	DotGitHash:   "e1580a78f7d36791249df76df8a2a2613d629902",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
 	URL:          "https://github.com/github/gem-builder.git",
 	PackfileHash: "1ea0b3971fd64fdcdf3282bfb58e8cf10095e4e6",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree"},
 	URL:          "https://github.com/githubtraining/example-branches.git",
 	PackfileHash: "bb8ee94710d3fa39379a630f76812c187217b312",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree"},
 	URL:          "https://github.com/rumpkernel/rumprun-xen.git",
 	PackfileHash: "7861f2632868833a35fe5e4ab94f99638ec5129b",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
 	URL:          "https://github.com/mcuadros/skeetr.git",
 	PackfileHash: "36ef7a2296bfd526020340d27c5e1faa805d8d38",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
 	URL:          "https://github.com/dezfowler/LiteMock.git",
 	PackfileHash: "0d9b6cfc261785837939aaede5986d7a7c212518",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
 	URL:          "https://github.com/tyba/storable.git",
 	PackfileHash: "0d3d824fb5c930e7e7e1f0f399f2976847d31fd3",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "diff-tree", "rev"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
 	URL:          "https://github.com/toqueteos/ts3.git",
 	PackfileHash: "21b33a26eb7ffbd35261149fe5d886b9debab7cb",
 	ObjectFormat: "sha1",
@@ -174,7 +174,7 @@ var fixtures = Fixtures{{
 	ObjectFormat: "sha1",
 }, {
 	// standalone packfile that does not have any dependencies nor is part of any other fixture repo.
-	Tags:         []string{"packfile", "standalone"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "standalone"},
 	PackfileHash: "3638209d310e10ea8d90c362d568be65dd5e03a6",
 	ObjectFormat: "sha1",
 }, {
@@ -202,7 +202,7 @@ var fixtures = Fixtures{{
 	ObjectsCount: 31,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"commit-graph-chain-2", "rev"},
+	Tags:         []string{"commit-graph-chain-2", "rev-v1"},
 	Head:         "ec6f456c0e8c7058a29611429965aa05c190b54b",
 	PackfileHash: "06ede69e9eba9f1af36eeee184402dc3ad705cd7",
 	DotGitHash:   "77b6511a6e67c99162ebcecd2763a9a19a7ad429",
@@ -216,20 +216,20 @@ var fixtures = Fixtures{{
 	WorktreeHash: "e3b91f99d8d050cac81d84fbef89172f58eeb745",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "codecommit"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "codecommit"},
 	PackfileHash: "9733763ae7ee6efcf452d373d6fff77424fb1dcc",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "delta-before-base"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "delta-before-base"},
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile-sha256", "packfile", "rev"}, // Drop packfile-sha256 as part of V6.
+	Tags:         []string{"packfile-sha256", "packfile", "rev-v1"}, // Drop packfile-sha256 as part of V6.
 	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
 	ObjectsCount: 5,
 	ObjectFormat: "sha256",
 }, {
-	Tags:         []string{"packfile", "notes"},
+	Tags:         []string{"packfile", "pack-v2", "idx-v2", "notes"},
 	PackfileHash: "bc4b855a55cae7703c023d4e36e3a7c9f5d84491",
 	ObjectFormat: "sha1",
 }, {

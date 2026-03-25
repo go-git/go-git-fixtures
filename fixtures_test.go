@@ -76,17 +76,6 @@ func TestEmbeddedFiles(t *testing.T) {
 	}
 }
 
-func TestRevFiles(t *testing.T) {
-	t.Parallel()
-
-	f := fixtures.ByTag("rev").One()
-	require.NotNil(t, f)
-
-	file, err := f.Rev()
-	require.NoError(t, err)
-	assert.NotNil(t, file, "failed to get rev file")
-}
-
 func TestAll(t *testing.T) {
 	t.Parallel()
 

@@ -52,7 +52,7 @@ func TestOSFixtureIdx(t *testing.T) {
 func TestOSFixtureRev(t *testing.T) {
 	t.Parallel()
 
-	f := fixtures.ByTag("rev").One()
+	f := fixtures.ByTag("rev-v1").One()
 	require.NotNil(t, f)
 
 	osf := fixtures.NewOSFixture(f, t.TempDir())
