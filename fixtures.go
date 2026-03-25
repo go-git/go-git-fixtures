@@ -22,7 +22,10 @@ var data embed.FS
 
 //nolint:gochecknoglobals
 var fixtures = Fixtures{{
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git", "root-reference", "index-ext-tree"},
+	Tags: []string{
+		"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
+		".git", "root-reference", "index-ext-tree",
+	},
 	URL:          "https://github.com/git-fixtures/root-references.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "135fe3d1ad828afe68706f1d481aedbcfa7a86d2",
@@ -30,7 +33,10 @@ var fixtures = Fixtures{{
 	ObjectsCount: 68,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git", "index-ext-tree"},
+	Tags: []string{
+		"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
+		".git", "index-ext-tree",
+	},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "a3fed42da1e8189a077c0e6846c040dcf73fc9dd",
@@ -38,7 +44,10 @@ var fixtures = Fixtures{{
 	ObjectsCount: 31,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ref-delta", ".git", "rev-v1"},
+	Tags: []string{
+		"packfile", "pack-v2", "idx-v2", "index-v2", "ref-delta",
+		".git", "rev-v1",
+	},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "c544593473465e6315ad4182d04d366c4592b829",
@@ -46,7 +55,10 @@ var fixtures = Fixtures{{
 	ObjectsCount: 31,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta", ".git", "single-branch", "rev-v1", "index-ext-tree"},
+	Tags: []string{
+		"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
+		".git", "single-branch", "rev-v1", "index-ext-tree",
+	},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
 	PackfileHash: "61f0ee9c75af1f9678e6f76ff39fbe372b6f1c45",
@@ -74,7 +86,10 @@ var fixtures = Fixtures{{
 	DotGitHash:   "935e5ac17c41c309c356639816ea0694a568c484",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{".git", "end-of-index-entry", "index-v2", "index-ext-eoie", "index-ext-tree"},
+	Tags: []string{
+		".git", "end-of-index-entry", "index-v2", "index-ext-eoie",
+		"index-ext-tree",
+	},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	DotGitHash:   "ab06771a67110b976953d34400d4dbc465ccd2d9",
 	ObjectFormat: "sha1",
@@ -89,7 +104,10 @@ var fixtures = Fixtures{{
 	WorktreeHash: "8b4d55c85677b6b94bef2e46832ed2174ed6ecaf",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "unpacked", "multi-packfile", "index-ext-tree"},
+	Tags: []string{
+		"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "unpacked",
+		"multi-packfile", "index-ext-tree",
+	},
 	URL:          "https://github.com/src-d/go-git.git",
 	Head:         "e8788ad9165781196e917292d6055cba1d78664e",
 	PackfileHash: "3559b3b47e695b33b0913237a4df3357e739831c",
@@ -97,7 +115,10 @@ var fixtures = Fixtures{{
 	ObjectsCount: 2133,
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "tags", "index-ext-tree"},
+	Tags: []string{
+		"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "tags",
+		"index-ext-tree",
+	},
 	URL:          "https://github.com/git-fixtures/tags.git",
 	Head:         "f7b877701fbf855b44c0a9e86f3fdce2c298b07f",
 	DotGitHash:   "c0c7c57ab1753ddbd26cc45322299ddd12842794",
@@ -117,7 +138,10 @@ var fixtures = Fixtures{{
 	PackfileHash: "4ec6344877f494690fc800aceaf2ca0e86786acb",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "index-v2", "empty-folder", "rev-v1", "index-ext-tree"},
+	Tags: []string{
+		"packfile", "pack-v2", "idx-v2", "index-v2", "empty-folder",
+		"rev-v1", "index-ext-tree",
+	},
 	URL:          "https://github.com/cpcs499/Final_Pres_P.git",
 	Head:         "70bade703ce556c2c7391a8065c45c943e8b6bc3",
 	PackfileHash: "29f304662fd64f102d94722cf5bd8802d9a9472c",
