@@ -45,6 +45,15 @@ var fixtures = Fixtures{{
 	ObjectFormat: "sha1",
 }, {
 	Tags: []string{
+		".git", "index-ext-tree", "reftable", "index-v2",
+	},
+	URL:          "https://github.com/git-fixtures/basic.git",
+	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
+	DotGitHash:   "5f620e4b3194c0c4a77fbd17f501030a441f54d4",
+	ObjectsCount: 31,
+	ObjectFormat: "sha1",
+}, {
+	Tags: []string{
 		"packfile", "pack-v2", "idx-v2", "index-v2", "ref-delta",
 		".git", "rev-v1",
 	},

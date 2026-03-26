@@ -81,7 +81,7 @@ func TestAll(t *testing.T) {
 
 	fs := fixtures.All()
 
-	assert.Len(t, fs, 39)
+	assert.Len(t, fs, 40)
 }
 
 func TestByTag(t *testing.T) {
@@ -93,7 +93,7 @@ func TestByTag(t *testing.T) {
 	}{
 		{tag: "packfile", len: 21},
 		{tag: "ofs-delta", len: 3},
-		{tag: ".git", len: 13},
+		{tag: ".git", len: 14},
 		{tag: "merge-conflict", len: 1},
 		{tag: "worktree", len: 6},
 		{tag: "submodule", len: 1},
@@ -121,7 +121,7 @@ func TestByURL(t *testing.T) {
 		len int
 	}{
 		{URL: "https://github.com/git-fixtures/root-references.git", len: 1},
-		{URL: "https://github.com/git-fixtures/basic.git", len: 9},
+		{URL: "https://github.com/git-fixtures/basic.git", len: 10},
 		{URL: "https://github.com/git-fixtures/submodule.git", len: 1},
 		{URL: "https://github.com/src-d/go-git.git", len: 1},
 		{URL: "https://github.com/git-fixtures/tags.git", len: 1},
@@ -239,7 +239,7 @@ func TestByObjectFormat(t *testing.T) {
 		{
 			name:         "sha1",
 			objectFormat: "sha1",
-			expectedLen:  37,
+			expectedLen:  38,
 		},
 		{
 			name:         "sha256",
@@ -250,7 +250,7 @@ func TestByObjectFormat(t *testing.T) {
 			name:         "sha1 with .git tag",
 			objectFormat: "sha1",
 			tag:          ".git",
-			expectedLen:  12,
+			expectedLen:  13,
 		},
 		{
 			name:         "sha256 with .git tag",
