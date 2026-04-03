@@ -11,7 +11,7 @@ import (
 
 	"github.com/go-git/go-billy/v6"
 	"github.com/go-git/go-billy/v6/embedfs"
-	"github.com/go-git/go-git-fixtures/v5/internal/tgz"
+	"github.com/go-git/go-git-fixtures/v6/internal/tgz"
 )
 
 //nolint:gochecknoglobals

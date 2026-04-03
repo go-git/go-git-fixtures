@@ -1,4 +1,4 @@
-module github.com/go-git/go-git-fixtures/v5
+module github.com/go-git/go-git-fixtures/v6
 
 // Must support at least last 2 stable Go versions: go-git/go-git#1769.
 go 1.24.0
