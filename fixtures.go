@@ -270,6 +270,16 @@ var fixtures = Fixtures{{
 	URL:          "https://gitlab.com/pjbgf/sha256.git",
 	DotGitHash:   "40143428b59fe03546fabba0603268bba3b3c58b",
 	ObjectFormat: "sha256",
+}, {
+	Tags: []string{
+		"packfile", ".git",
+	},
+	URL:          "https://github.com/git-fixtures/basic.git",
+	Head:         "4fef4adac3be863b9b94613016bdd8e53f67f6d7577234e028bc9d24c5a6a27c",
+	PackfileHash: "c88dfe1663bd216e278d5bb3c8decd0a4bb174a6204585dc44b7c7a05fceed55",
+	DotGitHash:   "c20badf43d2495f93b42cb3ea98ed04651510617da9b56d4e07c5837ec08f93d",
+	ObjectsCount: 31,
+	ObjectFormat: "sha256",
 }}
 
 func All() Fixtures {

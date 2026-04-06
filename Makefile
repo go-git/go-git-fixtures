@@ -14,7 +14,7 @@ $(GOLANGCI):
 test:
 	$(GOTEST) -race -parallel 20 ./...
 
-validate: validate-lint validate-dirty ## Run validation checks.
+validate: validate-lint validate-dirty validate-packs ## Run validation checks.
 
 validate-lint: $(GOLANGCI)
 	$(GOLANGCI) run
@@ -26,3 +26,32 @@ ifneq ($(shell git status --porcelain --untracked-files=no),)
 	@git --no-pager diff
 	@exit 1
 endif
+
+validate-packs:
+validate-packs:
+	@find data -maxdepth 1 -type f -name 'pack-*.pack' | sort -u | \
+	while read -r pack; do \
+		base=$$(basename "$$pack" .pack); \
+		hash=$${base#pack-}; \
+		case "$${#hash}" in \
+			40) \
+				[ "$$hash" = "ee4fef0ef8be5053ebae4ce75acf062ddf3031fb" ] && continue; \
+				git verify-pack -v "$$pack"; \
+				git index-pack --rev-index -v "$$pack"; \
+				;; \
+			64) \
+				[ "$$hash" = "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2" ] && continue; \
+				git --object-format=sha256 verify-pack -v "$$pack"; \
+				git --object-format=sha256 index-pack --rev-index -v "$$pack"; \
+				;; \
+			*) \
+				echo "Unknown hash length ($${#hash}) for $$pack" >&2; \
+				exit 1; \
+				;; \
+		esac; \
+	done
+	@git status --short
+	@git diff-index --quiet HEAD -- || { \
+		echo "Generated pack metadata differs from HEAD" >&2; \
+		exit 1; \
+	}
