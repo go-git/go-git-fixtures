@@ -257,7 +257,7 @@ var fixtures = Fixtures{{
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile-sha256", "packfile", "rev-v1"}, // Drop packfile-sha256 as part of V6.
+	Tags:         []string{"packfile", "rev-v1"},
 	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
 	ObjectsCount: 5,
 	ObjectFormat: "sha256",
@@ -266,19 +266,22 @@ var fixtures = Fixtures{{
 	PackfileHash: "bc4b855a55cae7703c023d4e36e3a7c9f5d84491",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{".git-sha256", ".git", "index-v2", "index-ext-tree"}, // Drop .git-sha256 as part of V6.
+	Tags:         []string{".git", "index-v2", "index-ext-tree"},
 	URL:          "https://gitlab.com/pjbgf/sha256.git",
 	DotGitHash:   "40143428b59fe03546fabba0603268bba3b3c58b",
 	ObjectFormat: "sha256",
 }, {
-	Tags: []string{
-		"packfile", ".git",
-	},
+	Tags:         []string{"packfile", ".git"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "4fef4adac3be863b9b94613016bdd8e53f67f6d7577234e028bc9d24c5a6a27c",
 	PackfileHash: "c88dfe1663bd216e278d5bb3c8decd0a4bb174a6204585dc44b7c7a05fceed55",
 	DotGitHash:   "c20badf43d2495f93b42cb3ea98ed04651510617da9b56d4e07c5837ec08f93d",
 	ObjectsCount: 31,
+	ObjectFormat: "sha256",
+}, {
+	Tags:         []string{"worktree", "submodule"},
+	URL:          "https://gitlab.com/go-git-fixtures/sha256-submodule.git",
+	WorktreeHash: "0ea94d909b15b328a0c646ba9cd1cfdb33dbd732f72f9a01e0dfc237b46cd32d",
 	ObjectFormat: "sha256",
 }}
 
