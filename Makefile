@@ -28,17 +28,21 @@ ifneq ($(shell git status --porcelain --untracked-files=no),)
 endif
 
 validate-packs:
-	@find data -maxdepth 1 -type f -name 'pack-*.pack' | sort | sort -u | \
+validate-packs:
+	@find data -maxdepth 1 -type f -name 'pack-*.pack' | sort -u | \
 	while read -r pack; do \
 		base=$$(basename "$$pack" .pack); \
 		hash=$${base#pack-}; \
 		case "$${#hash}" in \
 			40) \
- 				[ "$$hash" = "ee4fef0ef8be5053ebae4ce75acf062ddf3031fb" ] && continue; \
+				[ "$$hash" = "ee4fef0ef8be5053ebae4ce75acf062ddf3031fb" ] && continue; \
 				git verify-pack -v "$$pack"; \
+				git index-pack --rev-index -v "$$pack"; \
 				;; \
 			64) \
-				git verify-pack --object-format=sha256 -v "$$pack"; \
+				[ "$$hash" = "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2" ] && continue; \
+				git --object-format=sha256 verify-pack -v "$$pack"; \
+				git --object-format=sha256 index-pack --rev-index -v "$$pack"; \
 				;; \
 			*) \
 				echo "Unknown hash length ($${#hash}) for $$pack" >&2; \
@@ -46,3 +50,8 @@ validate-packs:
 				;; \
 		esac; \
 	done
+	@git status --short
+	@git diff-index --quiet HEAD -- || { \
+		echo "Generated pack metadata differs from HEAD" >&2; \
+		exit 1; \
+	}
