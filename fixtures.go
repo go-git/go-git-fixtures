@@ -34,7 +34,7 @@ var fixtures = Fixtures{{
 	ObjectFormat: "sha1",
 }, {
 	Tags: []string{
-		"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
+		"packfile", "packfile-entries", "scanner-entries", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
 		".git", "index-ext-tree",
 	},
 	URL:          "https://github.com/git-fixtures/basic.git",
@@ -54,7 +54,7 @@ var fixtures = Fixtures{{
 	ObjectFormat: "sha1",
 }, {
 	Tags: []string{
-		"packfile", "pack-v2", "idx-v2", "index-v2", "ref-delta",
+		"packfile", "packfile-entries", "scanner-entries", "pack-v2", "idx-v2", "index-v2", "ref-delta",
 		".git", "rev-v1",
 	},
 	URL:          "https://github.com/git-fixtures/basic.git",
@@ -257,7 +257,7 @@ var fixtures = Fixtures{{
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
 	ObjectFormat: "sha1",
 }, {
-	Tags:         []string{"packfile", "rev-v1"},
+	Tags:         []string{"packfile", "scanner-entries", "rev-v1"},
 	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
 	ObjectsCount: 5,
 	ObjectFormat: "sha256",
@@ -271,7 +271,7 @@ var fixtures = Fixtures{{
 	DotGitHash:   "40143428b59fe03546fabba0603268bba3b3c58b",
 	ObjectFormat: "sha256",
 }, {
-	Tags:         []string{"packfile", ".git"},
+	Tags:         []string{"packfile", "packfile-entries", ".git"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "4fef4adac3be863b9b94613016bdd8e53f67f6d7577234e028bc9d24c5a6a27c",
 	PackfileHash: "c88dfe1663bd216e278d5bb3c8decd0a4bb174a6204585dc44b7c7a05fceed55",
