@@ -11,6 +11,7 @@ linters:
     - unqueryvet
     - wrapcheck
     - wsl
+    - wsl_v5
   exclusions:
     generated: lax
     presets:
@@ -23,6 +24,10 @@ linters:
       - path: _test\.go
         linters:
           - exhaustruct
+      - path: scanner_entries\.go
+        linters:
+          - dupl
+          - lll
 
 formatters:
   enable:
