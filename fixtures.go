@@ -281,7 +281,7 @@ var fixtures = Fixtures{{
 }, {
 	Tags:         []string{"worktree", "submodule"},
 	URL:          "https://gitlab.com/go-git-fixtures/sha256-submodule.git",
-	WorktreeHash: "0ea94d909b15b328a0c646ba9cd1cfdb33dbd732f72f9a01e0dfc237b46cd32d",
+	WorktreeHash: "df8b2731b8978b5efca95cc2eef5ee43915e0945e3310653b0ef0c00453d67c4",
 	ObjectFormat: "sha256",
 }}
 
