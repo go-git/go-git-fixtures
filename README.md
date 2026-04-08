@@ -40,13 +40,36 @@ git gc
 tar -czf git.tgz -C .git .
 ```
 
-2. Get the sha1 of the file: `shasum < git.tgz`.
+2. Get the sha1/sha256 of the file: `sha1sum < git.tgz`.
 3. Move the file using the checksum to `data/git-<checksum>.tgz`
 4. Add a new entry in `fixtures.go`:
 
 ```
 {
-	Tags:         []string{"packfile", "<TAG_TO_REFER_TO>"},
-	PackfileHash: "<PACK_HASH>",
+	Tags:         []string{".git", "<TAG_TO_REFER_TO>"},
+	DotGitHash: "<GIT_TAR_HASH>",
+}
+```
+
+
+
+### Adding new worktree fixtures
+
+1. Tarball the contents of the cloned repository:
+
+```sh
+git clone https://<repository> <repository_name>
+
+tar -czf worktree.tgz -C <repository_name> .
+```
+
+2. Get the sha1/sha256 of the file: `sha256sum < worktree.tgz`.
+3. Move the file using the checksum to `data/worktree-<checksum>.tgz`
+4. Add a new entry in `fixtures.go`:
+
+```
+{
+	Tags:         []string{"worktree", "<TAG_TO_REFER_TO>"},
+	WorktreeHash: "<WORKTREE_TAR_HASH>",
 }
 ```
