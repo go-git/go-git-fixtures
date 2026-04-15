@@ -101,6 +101,7 @@ func TestByTag(t *testing.T) {
 		{tag: "notes", len: 1},
 		{tag: "multi-packfile", len: 1},
 		{tag: "diff-tree", len: 7},
+		{tag: "bitmap", len: 2},
 	}
 
 	for _, tc := range tests {
