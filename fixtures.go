@@ -115,7 +115,7 @@ var fixtures = Fixtures{{
 }, {
 	Tags: []string{
 		"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "unpacked",
-		"multi-packfile", "index-ext-tree",
+		"multi-packfile", "bitmap", "bitmap-xor", "index-ext-tree",
 	},
 	URL:          "https://github.com/src-d/go-git.git",
 	Head:         "e8788ad9165781196e917292d6055cba1d78664e",
