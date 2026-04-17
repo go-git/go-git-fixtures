@@ -84,7 +84,10 @@ validate-bitmaps:
 			echo "no commit found in $$pack" >&2; rm -rf "$$tmpdir"; exit 1; \
 		fi; \
 		echo "$$commit" > "$$tmpdir/refs/heads/main"; \
-		GIT_DIR="$$tmpdir" git rev-list --use-bitmap-index --count HEAD > /dev/null; \
+		errout=$$(GIT_DIR="$$tmpdir" git rev-list --use-bitmap-index --count HEAD 2>&1 >/dev/null); \
+		if [ -n "$$errout" ]; then \
+			echo "$$bitmap: $$errout" >&2; rm -rf "$$tmpdir"; exit 1; \
+		fi; \
 		rm -rf "$$tmpdir"; \
 		echo "OK: $$bitmap"; \
 	done
