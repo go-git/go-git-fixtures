@@ -27,6 +27,32 @@ ls .git/objects/pack/
 }
 ```
 
+### Adding new bitmap fixtures
+
+Bitmap fixtures are `.bitmap` files that accompany existing pack files.
+Git does not support generating pack bitmaps without also repacking. Instead,
+generate a multi-pack-index (MIDX) bitmap and convert it using the
+`doctor-bitmap` tool:
+
+1. In a repository that contains the target pack, generate a MIDX bitmap:
+
+```sh
+git multi-pack-index write --bitmap
+
+ls .git/objects/pack/multi-pack-index-*.bitmap
+```
+
+2. Convert the MIDX bitmap to a pack bitmap:
+
+```sh
+go run ./internal/cmd/doctor-bitmap \
+  .git/objects/pack/multi-pack-index-<HASH>.bitmap \
+  .git/objects/pack/pack-<PACK_HASH>.pack \
+  data/pack-<PACK_HASH>.bitmap
+```
+
+3. Add the `"bitmap"` tag to the fixture's `Tags` in `fixtures.go`.
+
 ### Adding new dot fixtures
 
 1. Tarball the contents of .git from a git repository:

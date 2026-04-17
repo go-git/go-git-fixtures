@@ -14,7 +14,7 @@ $(GOLANGCI):
 test:
 	$(GOTEST) -race -parallel 20 ./...
 
-validate: validate-lint validate-dirty validate-packs ## Run validation checks.
+validate: validate-lint validate-dirty validate-packs validate-bitmaps ## Run validation checks.
 
 validate-lint: $(GOLANGCI)
 	$(GOLANGCI) run
@@ -55,3 +55,36 @@ validate-packs:
 		echo "Generated pack metadata differs from HEAD" >&2; \
 		exit 1; \
 	}
+
+validate-bitmaps:
+	@find data -maxdepth 1 -type f -name '*.bitmap' | sort -u | \
+	while read -r bitmap; do \
+		pack=$${bitmap%.bitmap}.pack; \
+		idx=$${bitmap%.bitmap}.idx; \
+		if [ ! -f "$$pack" ]; then \
+			echo "bitmap $$bitmap has no matching pack file" >&2; \
+			exit 1; \
+		fi; \
+		if [ ! -f "$$idx" ]; then \
+			echo "bitmap $$bitmap has no matching idx file" >&2; \
+			exit 1; \
+		fi; \
+		base=$$(basename "$$pack" .pack); \
+		hash=$${base#pack-}; \
+		tmpdir=$$(mktemp -d); \
+		case "$${#hash}" in \
+			40) git init --bare "$$tmpdir" > /dev/null 2>&1 ;; \
+			64) git init --bare --object-format=sha256 "$$tmpdir" > /dev/null 2>&1 ;; \
+			*) echo "Unknown hash length ($${#hash}) for $$bitmap" >&2; rm -rf "$$tmpdir"; exit 1 ;; \
+		esac; \
+		cp "$$pack" "$$idx" "$$bitmap" "$$tmpdir/objects/pack/"; \
+		commit=$$(GIT_DIR="$$tmpdir" git verify-pack -v "$$tmpdir/objects/pack/$$(basename $$idx)" 2>/dev/null \
+			| awk '/commit/{print $$1; exit}'); \
+		if [ -z "$$commit" ]; then \
+			echo "no commit found in $$pack" >&2; rm -rf "$$tmpdir"; exit 1; \
+		fi; \
+		echo "$$commit" > "$$tmpdir/refs/heads/main"; \
+		GIT_DIR="$$tmpdir" git rev-list --use-bitmap-index --count HEAD > /dev/null; \
+		rm -rf "$$tmpdir"; \
+		echo "OK: $$bitmap"; \
+	done
