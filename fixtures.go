@@ -35,7 +35,7 @@ var fixtures = Fixtures{{
 }, {
 	Tags: []string{
 		"packfile", "packfile-entries", "scanner-entries", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
-		".git", "index-ext-tree",
+		"bitmap", ".git", "index-ext-tree",
 	},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
@@ -115,7 +115,7 @@ var fixtures = Fixtures{{
 }, {
 	Tags: []string{
 		"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "unpacked",
-		"multi-packfile", "index-ext-tree",
+		"multi-packfile", "bitmap", "bitmap-xor", "index-ext-tree",
 	},
 	URL:          "https://github.com/src-d/go-git.git",
 	Head:         "e8788ad9165781196e917292d6055cba1d78664e",
@@ -271,7 +271,7 @@ var fixtures = Fixtures{{
 	DotGitHash:   "40143428b59fe03546fabba0603268bba3b3c58b",
 	ObjectFormat: "sha256",
 }, {
-	Tags:         []string{"packfile", "packfile-entries", ".git"},
+	Tags:         []string{"packfile", "packfile-entries", "bitmap", ".git"},
 	URL:          "https://github.com/git-fixtures/basic.git",
 	Head:         "4fef4adac3be863b9b94613016bdd8e53f67f6d7577234e028bc9d24c5a6a27c",
 	PackfileHash: "c88dfe1663bd216e278d5bb3c8decd0a4bb174a6204585dc44b7c7a05fceed55",
@@ -358,6 +358,15 @@ func (f *Fixture) Idx() (billy.File, error) {
 
 func (f *Fixture) Rev() (billy.File, error) {
 	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.rev", f.PackfileHash))
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", os.ErrNotExist, err)
+	}
+
+	return file, nil
+}
+
+func (f *Fixture) Bitmap() (billy.File, error) {
+	file, err := Filesystem.Open(fmt.Sprintf("data/pack-%s.bitmap", f.PackfileHash))
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", os.ErrNotExist, err)
 	}
