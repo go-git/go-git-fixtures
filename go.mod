@@ -4,7 +4,7 @@ module github.com/go-git/go-git-fixtures/v6
 go 1.25.0
 
 require (
-	github.com/go-git/go-billy/v6 v6.0.0-20260410103409-85b6241850b5
+	github.com/go-git/go-billy/v6 v6.0.0-20260424211911-732291493fb8
 	github.com/stretchr/testify v1.11.1
 )
 
