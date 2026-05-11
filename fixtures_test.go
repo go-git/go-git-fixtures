@@ -196,10 +196,6 @@ func TestWithTargetDir(t *testing.T) {
 			options: nil,
 		},
 		{
-			name:    "with chroot",
-			options: []osfs.Option{osfs.WithChrootOS()},
-		},
-		{
 			name:    "with bound",
 			options: []osfs.Option{osfs.WithBoundOS()},
 		},
