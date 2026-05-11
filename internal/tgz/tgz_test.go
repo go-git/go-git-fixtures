@@ -102,7 +102,7 @@ func TestExtract(t *testing.T) { //nolint
 	}{
 		{name: "mem", factory: tgz.MemFactory},
 		{name: "osfs-temp", factory: func() (billy.Filesystem, error) {
-			return osfs.New(t.TempDir(), osfs.WithChrootOS()), nil
+			return osfs.New(t.TempDir(), osfs.WithBoundOS()), nil
 		}},
 	}
 
@@ -111,7 +111,7 @@ func TestExtract(t *testing.T) { //nolint
 			t.Run(fmt.Sprintf("[%s] tgz path = %s", ff.name, tc.tgz), func(t *testing.T) {
 				t.Parallel()
 
-				source := osfs.New("fixtures", osfs.WithChrootOS())
+				source := osfs.New("fixtures", osfs.WithBoundOS())
 				f, err := source.Open(tc.tgz)
 				require.NoError(t, err)
 
