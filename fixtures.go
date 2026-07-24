@@ -14,6 +14,29 @@ import (
 	"github.com/go-git/go-git-fixtures/v6/internal/tgz"
 )
 
+const (
+	tagDotGit          = ".git"
+	tagPackfile        = "packfile"
+	tagRevV1           = "rev-v1"
+	tagIDXV2           = "idx-v2"
+	tagPackV2          = "pack-v2"
+	tagIndexV2         = "index-v2"
+	tagIndexExtTree    = "index-ext-tree"
+	tagWorktree        = "worktree"
+	tagDiffTree        = "diff-tree"
+	tagPackfileEntries = "packfile-entries"
+	tagScannerEntries  = "scanner-entries"
+	tagOFSDelta        = "ofs-delta"
+
+	basicGitURL          = "https://github.com/git-fixtures/basic.git"
+	basicGitHead         = "6ecf0ef2c2dffb796033e5a02219af86ec6584e5"
+	basicOFSPackfileHash = "a3fed42da1e8189a077c0e6846c040dcf73fc9dd"
+	basicRefPackfileHash = "c544593473465e6315ad4182d04d366c4592b829"
+
+	objectFormatSHA1   = "sha1"
+	objectFormatSHA256 = "sha256"
+)
+
 //nolint:gochecknoglobals
 var Filesystem = embedfs.New(&data)
 
@@ -23,266 +46,266 @@ var data embed.FS
 //nolint:gochecknoglobals
 var fixtures = Fixtures{{
 	Tags: []string{
-		"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
-		".git", "root-reference", "index-ext-tree",
+		tagPackfile, tagPackV2, tagIDXV2, tagIndexV2, tagOFSDelta,
+		tagDotGit, "root-reference", tagIndexExtTree,
 	},
 	URL:          "https://github.com/git-fixtures/root-references.git",
-	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
+	Head:         basicGitHead,
 	PackfileHash: "135fe3d1ad828afe68706f1d481aedbcfa7a86d2",
 	DotGitHash:   "78c5fb882e76286d8201016cffee63ea7060a0c2",
 	ObjectsCount: 68,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags: []string{
-		"packfile", "packfile-entries", "scanner-entries", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
-		".git", "index-ext-tree",
+		tagPackfile, tagPackfileEntries, tagScannerEntries, tagPackV2, tagIDXV2, tagIndexV2, tagOFSDelta,
+		tagDotGit, tagIndexExtTree,
 	},
-	URL:          "https://github.com/git-fixtures/basic.git",
-	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
-	PackfileHash: "a3fed42da1e8189a077c0e6846c040dcf73fc9dd",
+	URL:          basicGitURL,
+	Head:         basicGitHead,
+	PackfileHash: basicOFSPackfileHash,
 	DotGitHash:   "7a725350b88b05ca03541b59dd0649fda7f521f2",
 	ObjectsCount: 31,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags: []string{
-		".git", "index-ext-tree", "reftable", "index-v2",
+		tagDotGit, tagIndexExtTree, "reftable", tagIndexV2,
 	},
-	URL:          "https://github.com/git-fixtures/basic.git",
-	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
+	URL:          basicGitURL,
+	Head:         basicGitHead,
 	DotGitHash:   "5f620e4b3194c0c4a77fbd17f501030a441f54d4",
 	ObjectsCount: 31,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags: []string{
-		"packfile", "packfile-entries", "scanner-entries", "pack-v2", "idx-v2", "index-v2", "ref-delta",
-		".git", "rev-v1",
+		tagPackfile, tagPackfileEntries, tagScannerEntries, tagPackV2, tagIDXV2, tagIndexV2, "ref-delta",
+		tagDotGit, tagRevV1,
 	},
-	URL:          "https://github.com/git-fixtures/basic.git",
-	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
-	PackfileHash: "c544593473465e6315ad4182d04d366c4592b829",
+	URL:          basicGitURL,
+	Head:         basicGitHead,
+	PackfileHash: basicRefPackfileHash,
 	DotGitHash:   "7cbde0ca02f13aedd5ec8b358ca17b1c0bf5ee64",
 	ObjectsCount: 31,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags: []string{
-		"packfile", "pack-v2", "idx-v2", "index-v2", "ofs-delta",
-		".git", "single-branch", "rev-v1", "index-ext-tree",
+		tagPackfile, tagPackV2, tagIDXV2, tagIndexV2, tagOFSDelta,
+		tagDotGit, "single-branch", tagRevV1, tagIndexExtTree,
 	},
-	URL:          "https://github.com/git-fixtures/basic.git",
-	Head:         "6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
+	URL:          basicGitURL,
+	Head:         basicGitHead,
 	PackfileHash: "61f0ee9c75af1f9678e6f76ff39fbe372b6f1c45",
 	DotGitHash:   "21504f6d2cc2ef0c9d6ebb8802c7b49abae40c1a",
 	ObjectsCount: 28,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{".git", "merge-conflict", "index-v2", "index-ext-none"},
-	URL:          "https://github.com/git-fixtures/basic.git",
+	Tags:         []string{tagDotGit, "merge-conflict", tagIndexV2, "index-ext-none"},
+	URL:          basicGitURL,
 	DotGitHash:   "4870d54b5b04e43da8cf99ceec179d9675494af8",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{".git", "resolve-undo", "index-v2", "index-ext-reuc"},
-	URL:          "https://github.com/git-fixtures/basic.git",
+	Tags:         []string{tagDotGit, "resolve-undo", tagIndexV2, "index-ext-reuc"},
+	URL:          basicGitURL,
 	DotGitHash:   "df6781fd40b8f4911d70ce71f8387b991615cd6d",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{".git", "intent-to-add", "index-v3", "index-ext-tree"},
-	URL:          "https://github.com/git-fixtures/basic.git",
+	Tags:         []string{tagDotGit, "intent-to-add", "index-v3", tagIndexExtTree},
+	URL:          basicGitURL,
 	DotGitHash:   "4e7600af05c3356e8b142263e127b76f010facfc",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{".git", "index-v4", "index-ext-tree"},
-	URL:          "https://github.com/git-fixtures/basic.git",
+	Tags:         []string{tagDotGit, "index-v4", tagIndexExtTree},
+	URL:          basicGitURL,
 	DotGitHash:   "935e5ac17c41c309c356639816ea0694a568c484",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags: []string{
-		".git", "end-of-index-entry", "index-v2", "index-ext-eoie",
-		"index-ext-tree",
+		tagDotGit, "end-of-index-entry", tagIndexV2, "index-ext-eoie",
+		tagIndexExtTree,
 	},
-	URL:          "https://github.com/git-fixtures/basic.git",
+	URL:          basicGitURL,
 	DotGitHash:   "ab06771a67110b976953d34400d4dbc465ccd2d9",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"worktree"},
-	URL:          "https://github.com/git-fixtures/basic.git",
+	Tags:         []string{tagWorktree},
+	URL:          basicGitURL,
 	WorktreeHash: "d2e42ddd68eacbb6034e7724e0dd4117ff1f01ee",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"worktree", "submodule"},
+	Tags:         []string{tagWorktree, "submodule"},
 	URL:          "https://github.com/git-fixtures/submodule.git",
 	WorktreeHash: "8b4d55c85677b6b94bef2e46832ed2174ed6ecaf",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags: []string{
-		"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "unpacked",
-		"multi-packfile", "index-ext-tree",
+		tagPackfile, tagPackV2, tagIDXV2, tagIndexV2, tagDotGit, "unpacked",
+		"multi-packfile", tagIndexExtTree,
 	},
 	URL:          "https://github.com/src-d/go-git.git",
 	Head:         "e8788ad9165781196e917292d6055cba1d78664e",
 	PackfileHash: "3559b3b47e695b33b0913237a4df3357e739831c",
 	DotGitHash:   "174be6bd4292c18160542ae6dc6704b877b8a01a",
 	ObjectsCount: 2133,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags: []string{
-		"packfile", "pack-v2", "idx-v2", "index-v2", ".git", "tags",
-		"index-ext-tree",
+		tagPackfile, tagPackV2, tagIDXV2, tagIndexV2, tagDotGit, "tags",
+		tagIndexExtTree,
 	},
 	URL:          "https://github.com/git-fixtures/tags.git",
 	Head:         "f7b877701fbf855b44c0a9e86f3fdce2c298b07f",
 	DotGitHash:   "c0c7c57ab1753ddbd26cc45322299ddd12842794",
 	PackfileHash: "b68617dd8637fe6409d9842825a843a1d9a6e484",
 	ObjectsCount: 7,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "rev-v1"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagRevV1},
 	URL:          "https://github.com/spinnaker/spinnaker.git",
 	Head:         "06ce06d0fc49646c4de733c45b7788aabad98a6f",
 	PackfileHash: "f2e0a8889a746f7600e07d2246a2e29a72f696be",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "rev-v1"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagRevV1},
 	URL:          "https://github.com/jamesob/desk.git",
 	Head:         "d2313db6e7ca7bac79b819d767b2a1449abb0a5d",
 	PackfileHash: "4ec6344877f494690fc800aceaf2ca0e86786acb",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags: []string{
-		"packfile", "pack-v2", "idx-v2", "index-v2", "empty-folder",
-		"rev-v1", "index-ext-tree",
+		tagPackfile, tagPackV2, tagIDXV2, tagIndexV2, "empty-folder",
+		tagRevV1, tagIndexExtTree,
 	},
 	URL:          "https://github.com/cpcs499/Final_Pres_P.git",
 	Head:         "70bade703ce556c2c7391a8065c45c943e8b6bc3",
 	PackfileHash: "29f304662fd64f102d94722cf5bd8802d9a9472c",
 	DotGitHash:   "e1580a78f7d36791249df76df8a2a2613d629902",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagDiffTree, tagRevV1},
 	URL:          "https://github.com/github/gem-builder.git",
 	PackfileHash: "1ea0b3971fd64fdcdf3282bfb58e8cf10095e4e6",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagDiffTree},
 	URL:          "https://github.com/githubtraining/example-branches.git",
 	PackfileHash: "bb8ee94710d3fa39379a630f76812c187217b312",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagDiffTree},
 	URL:          "https://github.com/rumpkernel/rumprun-xen.git",
 	PackfileHash: "7861f2632868833a35fe5e4ab94f99638ec5129b",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagDiffTree, tagRevV1},
 	URL:          "https://github.com/mcuadros/skeetr.git",
 	PackfileHash: "36ef7a2296bfd526020340d27c5e1faa805d8d38",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagDiffTree, tagRevV1},
 	URL:          "https://github.com/dezfowler/LiteMock.git",
 	PackfileHash: "0d9b6cfc261785837939aaede5986d7a7c212518",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagDiffTree, tagRevV1},
 	URL:          "https://github.com/tyba/storable.git",
 	PackfileHash: "0d3d824fb5c930e7e7e1f0f399f2976847d31fd3",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "diff-tree", "rev-v1"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, tagDiffTree, tagRevV1},
 	URL:          "https://github.com/toqueteos/ts3.git",
 	PackfileHash: "21b33a26eb7ffbd35261149fe5d886b9debab7cb",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"empty", ".git", "index-v2"},
+	Tags:         []string{"empty", tagDotGit, tagIndexV2},
 	URL:          "https://github.com/git-fixtures/empty.git",
 	DotGitHash:   "bf3fedcc8e20fd0dec9172987ceea0038d17b516",
 	ObjectsCount: 0,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"worktree", "alternates"},
+	Tags:         []string{tagWorktree, "alternates"},
 	WorktreeHash: "a6b6ff89c593f042347113203ead1c14ab5733ce",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"worktree", "dirty"},
+	Tags:         []string{tagWorktree, "dirty"},
 	WorktreeHash: "7203669c66103305e56b9dcdf940a7fbeb515f28",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	// standalone packfile that does not have any dependencies nor is part of any other fixture repo.
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "standalone"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, "standalone"},
 	PackfileHash: "3638209d310e10ea8d90c362d568be65dd5e03a6",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
 	// adds commit on top of spinnaker fixture 06ce06d0fc49646c4de733c45b7788aabad98a6f via a thin pack.
 	Tags:         []string{"thinpack"},
 	PackfileHash: "ee4fef0ef8be5053ebae4ce75acf062ddf3031fb",
 	Head:         "ee372bb08322c1e6e7c6c4f953cc6bf72784e7fb", // the thin pack adds this commit.
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"merge-base", "index-v2", "index-ext-reuc", "index-ext-tree"},
+	Tags:         []string{"merge-base", tagIndexV2, "index-ext-reuc", tagIndexExtTree},
 	DotGitHash:   "26baa505b9f6fb2024b9999c140b75514718c988",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"commit-graph", "index-v2", "index-ext-tree"},
+	Tags:         []string{"commit-graph", tagIndexV2, tagIndexExtTree},
 	Head:         "b9d69064b190e7aedccf84731ca1d917871f8a1c",
 	PackfileHash: "769137af7784db501bca677fbd56fef8b52515b7",
 	DotGitHash:   "cf717ccadce761d60bb4a8557a7b9a2efd23816a",
 	ObjectsCount: 31,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"commit-graph-chain", "index-v2", "index-ext-tree"},
+	Tags:         []string{"commit-graph-chain", tagIndexV2, tagIndexExtTree},
 	Head:         "b9d69064b190e7aedccf84731ca1d917871f8a1c",
 	PackfileHash: "769137af7784db501bca677fbd56fef8b52515b7",
 	DotGitHash:   "00a1fc100787506f842e55511994f08df2c2cd66",
 	ObjectsCount: 31,
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"commit-graph-chain-2", "rev-v1", "index-v2", "index-ext-tree"},
+	Tags:         []string{"commit-graph-chain-2", tagRevV1, tagIndexV2, tagIndexExtTree},
 	Head:         "ec6f456c0e8c7058a29611429965aa05c190b54b",
 	PackfileHash: "06ede69e9eba9f1af36eeee184402dc3ad705cd7",
 	DotGitHash:   "77b6511a6e67c99162ebcecd2763a9a19a7ad429",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"worktree", "linked-worktree"},
+	Tags:         []string{tagWorktree, "linked-worktree"},
 	WorktreeHash: "363d996b02d9c3b598f0176619f5c6a44a82480a",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"worktree", "main-branch", "no-master-head"},
+	Tags:         []string{tagWorktree, "main-branch", "no-master-head"},
 	WorktreeHash: "e3b91f99d8d050cac81d84fbef89172f58eeb745",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "codecommit"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, "codecommit"},
 	PackfileHash: "9733763ae7ee6efcf452d373d6fff77424fb1dcc",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "delta-before-base"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, "delta-before-base"},
 	PackfileHash: "90fedc00729b64ea0d0406db861be081cda25bbf",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{"packfile", "scanner-entries", "rev-v1"},
+	Tags:         []string{tagPackfile, tagScannerEntries, tagRevV1},
 	PackfileHash: "407497645643e18a7ba56c6132603f167fe9c51c00361ee0c81d74a8f55d0ee2",
 	ObjectsCount: 5,
-	ObjectFormat: "sha256",
+	ObjectFormat: objectFormatSHA256,
 }, {
-	Tags:         []string{"packfile", "pack-v2", "idx-v2", "notes"},
+	Tags:         []string{tagPackfile, tagPackV2, tagIDXV2, "notes"},
 	PackfileHash: "bc4b855a55cae7703c023d4e36e3a7c9f5d84491",
-	ObjectFormat: "sha1",
+	ObjectFormat: objectFormatSHA1,
 }, {
-	Tags:         []string{".git", "index-v2", "index-ext-tree"},
+	Tags:         []string{tagDotGit, tagIndexV2, tagIndexExtTree},
 	URL:          "https://gitlab.com/pjbgf/sha256.git",
 	DotGitHash:   "40143428b59fe03546fabba0603268bba3b3c58b",
-	ObjectFormat: "sha256",
+	ObjectFormat: objectFormatSHA256,
 }, {
-	Tags:         []string{"packfile", "packfile-entries", ".git"},
-	URL:          "https://github.com/git-fixtures/basic.git",
+	Tags:         []string{tagPackfile, tagPackfileEntries, tagDotGit},
+	URL:          basicGitURL,
 	Head:         "4fef4adac3be863b9b94613016bdd8e53f67f6d7577234e028bc9d24c5a6a27c",
 	PackfileHash: "c88dfe1663bd216e278d5bb3c8decd0a4bb174a6204585dc44b7c7a05fceed55",
 	DotGitHash:   "c20badf43d2495f93b42cb3ea98ed04651510617da9b56d4e07c5837ec08f93d",
 	ObjectsCount: 31,
-	ObjectFormat: "sha256",
+	ObjectFormat: objectFormatSHA256,
 }, {
-	Tags:         []string{"worktree", "submodule"},
+	Tags:         []string{tagWorktree, "submodule"},
 	URL:          "https://gitlab.com/go-git-fixtures/sha256-submodule.git",
 	WorktreeHash: "df8b2731b8978b5efca95cc2eef5ee43915e0945e3310653b0ef0c00453d67c4",
-	ObjectFormat: "sha256",
+	ObjectFormat: objectFormatSHA256,
 }}
 
 func All() Fixtures {
@@ -295,7 +318,7 @@ func All() Fixtures {
 }
 
 func Basic() Fixtures {
-	return ByURL("https://github.com/git-fixtures/basic.git").
+	return ByURL(basicGitURL).
 		Exclude("single-branch")
 }
 
@@ -318,7 +341,7 @@ func ByObjectFormat(format string) Fixtures {
 type Fixture struct {
 	// URL is the original repository URL from which this fixture was created.
 	URL string
-	// Tags are labels used to categorize and filter fixtures (e.g., "packfile", ".git", "worktree").
+	// Tags are labels used to categorize and filter fixtures (e.g., tagPackfile, ".git", "worktree").
 	Tags []string
 	// Head is the commit hash that HEAD points to in this fixture.
 	Head string
