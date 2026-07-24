@@ -6,7 +6,7 @@ package fixtures
 //nolint:gochecknoglobals
 var scannerEntries = map[string][]ScannerEntry{
 	// basic.git ofs-delta (sha1)
-	"a3fed42da1e8189a077c0e6846c040dcf73fc9dd": {
+	basicOFSPackfileHash: {
 		{Type: 1, Offset: 12, Size: 254, Hash: "e8d3ffab552895c19b9fcf7aa264d277cde33881", Reference: "", OffsetReference: 0, CRC32: 0xaa07ba4b},
 		{Type: 6, Offset: 186, Size: 93, Hash: "", Reference: "", OffsetReference: 12, CRC32: 0xf706df58},
 		{Type: 1, Offset: 286, Size: 242, Hash: "918c48b83bd081e863dbe1b80f8998f058cd8294", Reference: "", OffsetReference: 0, CRC32: 0x12438846},
@@ -40,7 +40,7 @@ var scannerEntries = map[string][]ScannerEntry{
 		{Type: 6, Offset: 84760, Size: 4, Hash: "", Reference: "", OffsetReference: 84741, CRC32: 0x1d75d6be},
 	},
 	// basic.git ref-delta (sha1)
-	"c544593473465e6315ad4182d04d366c4592b829": {
+	basicRefPackfileHash: {
 		{Type: 1, Offset: 12, Size: 254, Hash: "e8d3ffab552895c19b9fcf7aa264d277cde33881", Reference: "", OffsetReference: 0, CRC32: 0xaa07ba4b},
 		{Type: 7, Offset: 186, Size: 93, Hash: "", Reference: "e8d3ffab552895c19b9fcf7aa264d277cde33881", OffsetReference: 0, CRC32: 0xfb4725a4},
 		{Type: 1, Offset: 304, Size: 242, Hash: "918c48b83bd081e863dbe1b80f8998f058cd8294", Reference: "", OffsetReference: 0, CRC32: 0x12438846},

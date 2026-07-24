@@ -66,7 +66,7 @@ var basicSHA1Hashes = [...]string{
 	"4d081c50e250fa32ea8b1313cf8bb7c2ad7627fd",
 	"586af567d0bb5e771e49bdd9434f5e0fb76d25fa",
 	"5a877e6a906a2743ad6e45d99c1793642aaf8eda",
-	"6ecf0ef2c2dffb796033e5a02219af86ec6584e5",
+	basicGitHead,
 	"7e59600739c96546163833214c36459e324bad0a",
 	"880cd14280f4b9b6ed3986d6671f907d7cc2a198",
 	"8dcef98b1d52143e1e2dbc458ffe38f925786bf2",
@@ -141,7 +141,7 @@ var basicSHA256Hashes = [...]string{
 //nolint:gochecknoglobals
 var packfileEntries = map[string]packfileData{
 	// basic.git ofs-delta (sha1)
-	"a3fed42da1e8189a077c0e6846c040dcf73fc9dd": {
+	basicOFSPackfileHash: {
 		hashes: basicSHA1Hashes[:],
 		offsets: []int64{
 			615, 1524, 1063, 78882, 84688, 84559, 84479, 186,
@@ -151,7 +151,7 @@ var packfileEntries = map[string]packfileData{
 		},
 	},
 	// basic.git ref-delta (sha1)
-	"c544593473465e6315ad4182d04d366c4592b829": {
+	basicRefPackfileHash: {
 		hashes: basicSHA1Hashes[:],
 		offsets: []int64{
 			633, 1542, 1243, 79129, 85262, 81265, 79049, 186,
