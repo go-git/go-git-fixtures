@@ -81,7 +81,7 @@ func TestAll(t *testing.T) {
 
 	fs := fixtures.All()
 
-	assert.Len(t, fs, 42)
+	assert.Len(t, fs, 47)
 }
 
 func TestByTag(t *testing.T) {
@@ -93,7 +93,7 @@ func TestByTag(t *testing.T) {
 	}{
 		{tag: "packfile", len: 22},
 		{tag: "ofs-delta", len: 3},
-		{tag: ".git", len: 15},
+		{tag: ".git", len: 20},
 		{tag: "merge-conflict", len: 1},
 		{tag: "worktree", len: 7},
 		{tag: "submodule", len: 2},
@@ -235,24 +235,24 @@ func TestByObjectFormat(t *testing.T) {
 		{
 			name:         "sha1",
 			objectFormat: "sha1",
-			expectedLen:  38,
+			expectedLen:  41,
 		},
 		{
 			name:         "sha256",
 			objectFormat: "sha256",
-			expectedLen:  4,
+			expectedLen:  6,
 		},
 		{
 			name:         "sha1 with .git tag",
 			objectFormat: "sha1",
 			tag:          ".git",
-			expectedLen:  13,
+			expectedLen:  16,
 		},
 		{
 			name:         "sha256 with .git tag",
 			objectFormat: "sha256",
 			tag:          ".git",
-			expectedLen:  2,
+			expectedLen:  4,
 		},
 		{
 			name:         "sha1 with packfile tag",

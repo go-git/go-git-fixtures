@@ -28,6 +28,13 @@ const (
 	tagScannerEntries  = "scanner-entries"
 	tagOFSDelta        = "ofs-delta"
 
+	tagCommitGraphDeterministic = "commit-graph-deterministic"
+	tagCommitGraphStandalone    = "commit-graph-standalone"
+	tagCommitGraphSplit         = "commit-graph-split"
+
+	commitGraphSHA1Head   = "a1c2919da011991eb11b912505669ca434ef9963"
+	commitGraphSHA256Head = "d0153abce790d4c67ce70c39479622e1de131277e7c04b2537d090ccee221058"
+
 	basicGitURL          = "https://github.com/git-fixtures/basic.git"
 	basicGitHead         = "6ecf0ef2c2dffb796033e5a02219af86ec6584e5"
 	basicOFSPackfileHash = "a3fed42da1e8189a077c0e6846c040dcf73fc9dd"
@@ -306,6 +313,36 @@ var fixtures = Fixtures{{
 	URL:          "https://gitlab.com/go-git-fixtures/sha256-submodule.git",
 	WorktreeHash: "df8b2731b8978b5efca95cc2eef5ee43915e0945e3310653b0ef0c00453d67c4",
 	ObjectFormat: objectFormatSHA256,
+}, {
+	Tags:         []string{tagDotGit, tagCommitGraphDeterministic, tagCommitGraphStandalone, "commit-graph-sha1"},
+	Head:         commitGraphSHA1Head,
+	DotGitHash:   "f013278ffd15e6e5e2c2f51caf5f00c621e3bf8658f9ed31c3e2b2f2d81b975b",
+	ObjectsCount: 4,
+	ObjectFormat: objectFormatSHA1,
+}, {
+	Tags:         []string{tagDotGit, tagCommitGraphDeterministic, tagCommitGraphSplit, "commit-graph-chain-sha1"},
+	Head:         commitGraphSHA1Head,
+	DotGitHash:   "07382e691c9ba9c8dd05011370d63b0cd4cc9cae037a6deeb7ed006d755723f8",
+	ObjectsCount: 4,
+	ObjectFormat: objectFormatSHA1,
+}, {
+	Tags:         []string{tagDotGit, tagCommitGraphDeterministic, tagCommitGraphStandalone, "commit-graph-sha256"},
+	Head:         commitGraphSHA256Head,
+	DotGitHash:   "2a81d0fbcf5d6d8fd3360c7c525555fa7dfe6f90e2164848b9446d5bc54b7bbb",
+	ObjectsCount: 4,
+	ObjectFormat: objectFormatSHA256,
+}, {
+	Tags:         []string{tagDotGit, tagCommitGraphDeterministic, tagCommitGraphSplit, "commit-graph-chain-sha256"},
+	Head:         commitGraphSHA256Head,
+	DotGitHash:   "8f00d489ae1fc43a93b1c5fe4b972f05c521876eb0833c1ebb1020d3de2d3e38",
+	ObjectsCount: 4,
+	ObjectFormat: objectFormatSHA256,
+}, {
+	Tags:         []string{tagDotGit, tagCommitGraphDeterministic, tagCommitGraphSplit, "commit-graph-chain-sha1-257"},
+	Head:         "c0a8e9aded3ce91103045224a2d175c2e2c9dd2b",
+	DotGitHash:   "0ca725f6e8f690c5c3f11e7512af689443dc32a7e1ea123b23a17c6e3f470753",
+	ObjectsCount: 258,
+	ObjectFormat: objectFormatSHA1,
 }}
 
 func All() Fixtures {
