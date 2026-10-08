@@ -1,5 +1,7 @@
 package fixtures
 
+import "slices"
+
 // PackfileEntry maps an object hash (hex-encoded) to its byte offset in the packfile.
 type PackfileEntry = map[string]int64
 
@@ -50,6 +52,31 @@ func (f *Fixture) ScannerEntries() []ScannerEntry {
 
 	out := make([]ScannerEntry, len(entries))
 	copy(out, entries)
+
+	return out
+}
+
+// CommitGraphEntry represents a commit in a commit-graph fixture.
+// Fields use hex-encoded IDs in the fixture's ObjectFormat.
+type CommitGraphEntry struct {
+	Hash    string
+	Tree    string
+	Parents []string
+}
+
+// CommitGraphEntries returns the expected commits for this fixture's commit graph,
+// ordered oldest first. Returns nil if not registered.
+// The returned entries and parent slices can be modified independently.
+func (f *Fixture) CommitGraphEntries() []CommitGraphEntry {
+	entries, ok := commitGraphEntries[f.DotGitHash]
+	if !ok {
+		return nil
+	}
+
+	out := slices.Clone(entries)
+	for i := range out {
+		out[i].Parents = slices.Clone(out[i].Parents)
+	}
 
 	return out
 }
