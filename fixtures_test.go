@@ -81,7 +81,7 @@ func TestAll(t *testing.T) {
 
 	fs := fixtures.All()
 
-	assert.Len(t, fs, 42)
+	assert.Len(t, fs, 45)
 }
 
 func TestByTag(t *testing.T) {
@@ -235,7 +235,7 @@ func TestByObjectFormat(t *testing.T) {
 		{
 			name:         "sha1",
 			objectFormat: "sha1",
-			expectedLen:  38,
+			expectedLen:  41,
 		},
 		{
 			name:         "sha256",
