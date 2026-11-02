@@ -121,9 +121,10 @@ func verifyCommitGraphFiles(t *testing.T, fixture *fixtures.Fixture, fs billy.Fi
 	t.Helper()
 
 	paths := []string{"objects/info/commit-graph"}
+	var ids []string
 	if fixture.Is("commit-graph-split") {
 		chain := readGraphFixtureFile(t, fs, "objects/info/commit-graphs/commit-graph-chain")
-		ids := strings.Fields(string(chain))
+		ids = strings.Fields(string(chain))
 		require.Len(t, ids, len(fixture.CommitGraphEntries()))
 		paths = make([]string, 0, len(ids))
 		for _, id := range ids {
@@ -148,26 +149,18 @@ func verifyCommitGraphFiles(t *testing.T, fixture *fixtures.Fixture, fs billy.Fi
 		require.Equal(t, byte(1), graph[4])
 		require.Equal(t, hashVersion, graph[5])
 		require.EqualValues(t, layer%256, graph[7])
-		require.Equal(t, hex.EncodeToString(graph[len(graph)-hashSize:]),
-			graphFixtureHash(graph[:len(graph)-hashSize], fixture.ObjectFormat))
+		trailer := hex.EncodeToString(graph[len(graph)-hashSize:])
+		require.Equal(t, trailer, graphFixtureHash(graph[:len(graph)-hashSize], fixture.ObjectFormat))
 
-		var baseSize int
-		for chunk := range int(graph[6]) {
-			position := 8 + chunk*12
-			start := binary.BigEndian.Uint64(graph[position+4 : position+12])
-			end := binary.BigEndian.Uint64(graph[position+16 : position+24])
-			require.LessOrEqual(t, start, end)
-			require.LessOrEqual(t, end, uint64(len(graph)-hashSize)) //nolint:gosec // Graph length exceeds its trailer.
-			switch string(graph[position : position+4]) {
-			case "BASE":
-				baseSize = len(graph[start:end])
-			case "OIDL":
-				for offset := start; offset < end; offset += uint64(hashSize) {
-					commits = append(commits, hex.EncodeToString(graph[offset:offset+uint64(hashSize)]))
-				}
-			}
+		base, oids := readGraphFixtureChunks(t, graph, uint64(hashSize))
+		commits = append(commits, oids...)
+		// A chain layer is named by its trailer and lists every older layer,
+		// oldest first, in its BASE chunk.
+		if ids != nil {
+			require.Equal(t, ids[layer], trailer)
 		}
-		require.Equal(t, layer*hashSize, baseSize)
+		require.Len(t, base, layer*hashSize)
+		require.Equal(t, strings.Join(ids[:layer], ""), hex.EncodeToString(base))
 	}
 
 	expected := make([]string, 0, len(fixture.CommitGraphEntries()))
@@ -175,4 +168,28 @@ func verifyCommitGraphFiles(t *testing.T, fixture *fixtures.Fixture, fs billy.Fi
 		expected = append(expected, entry.Hash)
 	}
 	require.ElementsMatch(t, expected, commits)
+}
+
+func readGraphFixtureChunks(t *testing.T, graph []byte, hashSize uint64) ([]byte, []string) {
+	t.Helper()
+
+	var base []byte
+	var oids []string
+	for chunk := range int(graph[6]) {
+		position := 8 + chunk*12
+		start := binary.BigEndian.Uint64(graph[position+4 : position+12])
+		end := binary.BigEndian.Uint64(graph[position+16 : position+24])
+		require.LessOrEqual(t, start, end)
+		require.LessOrEqual(t, end, uint64(len(graph))-hashSize)
+		switch string(graph[position : position+4]) {
+		case "BASE":
+			base = graph[start:end]
+		case "OIDL":
+			for offset := start; offset < end; offset += hashSize {
+				oids = append(oids, hex.EncodeToString(graph[offset:offset+hashSize]))
+			}
+		}
+	}
+
+	return base, oids
 }

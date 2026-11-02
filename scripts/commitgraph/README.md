@@ -12,8 +12,11 @@ The script can also be invoked by absolute path from another directory.
 
 Generation requires Git 2.54 or later, Go (`gofmt`), GNU tar, gzip, sha256sum and
 standard POSIX shell utilities. Git 2.54.0 was used for the checked-in fixtures.
-The Git version requirement covers SHA-256 commit graphs and acceptance of a
-split graph with 256 bases whose one-byte header count wraps to zero.
+The version check is not about graph features: SHA-256 and split graphs predate
+it, and Git's loader never reads the base count in header byte 7, so the wrapped
+count needs no particular release. Graph bytes, and with them archive hashes,
+can differ between Git versions, so the check keeps regeneration on the release
+the registered archives were produced with, or a newer one.
 
 Consumers load the embedded archives with `DotGit(fixtures.WithMemFS())` and
 need no Git executable. Expected commit, tree and parent IDs are available
