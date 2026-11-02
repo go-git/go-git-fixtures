@@ -15,7 +15,7 @@ major=${version%%.*}
 minor=${version#*.}
 minor=${minor%%.*}
 if [ "$major" -lt 2 ] || { [ "$major" -eq 2 ] && [ "$minor" -lt 54 ]; }; then
-    echo 'Git 2.54 or later is required (SHA-256 and 256-base graph support).' >&2
+    echo 'Git 2.54 or later is required to reproduce the registered archives.' >&2
     exit 1
 fi
 
