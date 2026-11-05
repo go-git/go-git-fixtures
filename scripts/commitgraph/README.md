@@ -61,7 +61,10 @@ graph checksums, commit IDs and the 256-base boundary.
 Archives use the existing `data/git-<sha256-of-archive>.tgz` layout. GNU tar
 normalizes entry ordering, timestamps and ownership; `gzip -n` removes gzip
 timestamps, and a fixed umask stabilizes permissions. Repeating generation with
-the same tool versions produces the same archive hashes.
+the same Git version produces the same object IDs and graph bytes. The archive
+hashes can still differ: Git stores loose objects zlib-compressed, so the hashes
+also depend on the zlib build Git uses, and on the gzip that compresses the
+archives.
 
 `commit_graph_entries.go` is regenerated with literal commit, tree and parent IDs
 in oldest-first order, keyed by archive hash. The script prints each fixture's

@@ -15,7 +15,7 @@ major=${version%%.*}
 minor=${version#*.}
 minor=${minor%%.*}
 if [ "$major" -lt 2 ] || { [ "$major" -eq 2 ] && [ "$minor" -lt 54 ]; }; then
-    echo 'Git 2.54 or later is required to reproduce the registered archives.' >&2
+    echo 'Git 2.54 or later is required. Git 2.54.0 produced the registered archives; newer releases may write different bytes.' >&2
     exit 1
 fi
 
