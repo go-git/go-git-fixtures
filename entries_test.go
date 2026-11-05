@@ -110,6 +110,36 @@ func TestScannerEntriesReturnsFreshSlice(t *testing.T) {
 	assert.NotEqual(t, a, b)
 }
 
+func TestCommitGraphEntriesReturnsNilForUnregisteredFixture(t *testing.T) {
+	t.Parallel()
+
+	f := fixtures.ByTag("notes").One()
+	require.NotNil(t, f)
+	assert.Nil(t, f.CommitGraphEntries())
+}
+
+func TestCommitGraphEntriesReturnsFreshSlice(t *testing.T) {
+	t.Parallel()
+
+	f := fixtures.ByTag("commit-graph-chain-sha1").One()
+	require.NotNil(t, f)
+
+	a := f.CommitGraphEntries()
+	b := f.CommitGraphEntries()
+
+	require.Len(t, a, 3)
+	require.Len(t, b, 3)
+	require.Len(t, a[1].Parents, 1)
+
+	assert.Equal(t, a, b)
+
+	a[0].Hash = "mutated"
+	a[1].Parents[0] = "mutated"
+	assert.NotEqual(t, a[0].Hash, b[0].Hash)
+	assert.NotEqual(t, a[1].Parents, b[1].Parents)
+	assert.Equal(t, b, f.CommitGraphEntries())
+}
+
 func TestEntriesConsistentWithScannerEntries(t *testing.T) {
 	t.Parallel()
 
