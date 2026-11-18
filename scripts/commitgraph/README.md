@@ -58,13 +58,24 @@ Generation aborts if verification fails. It also checks chain lengths and the
 wrapped header byte. The in-memory tests check deterministic loose objects,
 graph checksums, commit IDs and the 256-base boundary.
 
-Archives use the existing `data/git-<sha256-of-archive>.tgz` layout. GNU tar
-normalizes entry ordering, timestamps and ownership; `gzip -n` removes gzip
-timestamps, and a fixed umask stabilizes permissions. Repeating generation with
-the same Git version produces the same object IDs and graph bytes. The archive
-hashes can still differ: Git stores loose objects zlib-compressed, so the hashes
-also depend on the zlib build Git uses, and on the gzip that compresses the
-archives.
+Archives use the existing `data/git-<sha256-of-archive>.tgz` layout. The script
+builds each one with `tar --format=gnu --sort=name --mtime=@1700000000
+--owner=0 --group=0 --numeric-owner`, then `gzip -n`. The tar format is pinned
+because a tar build default can select another one, which changes the archive
+bytes. A fixed umask stabilizes permissions, and `gzip -n` removes gzip
+timestamps.
+
+The script unsets every inherited `GIT_*` variable, `TAR_OPTIONS` and `GZIP`,
+and creates the repositories with `--ref-format=files`. Left in place, they can
+change commit bytes (`i18n.commitEncoding` through `GIT_CONFIG_*`), add graph
+chunks (`GIT_TEST_COMMIT_GRAPH_CHANGED_PATHS`), switch the ref storage
+(`GIT_DEFAULT_REF_FORMAT`), drop objects from the archives
+(`GIT_ALTERNATE_OBJECT_DIRECTORIES`), or change the tar and gzip output.
+
+Repeating generation with the same Git version produces the same object IDs and
+graph bytes. The archive hashes can still differ: Git stores loose objects
+zlib-compressed, so the hashes also depend on the zlib build Git uses, and on
+the gzip that compresses the archives.
 
 `commit_graph_entries.go` is regenerated with literal commit, tree and parent IDs
 in oldest-first order, keyed by archive hash. The script prints each fixture's

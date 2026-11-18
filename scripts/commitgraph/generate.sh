@@ -6,6 +6,13 @@ umask 022
 destination=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT HUP INT TERM
+# Inherited GIT_* variables can change object bytes or the repository layout
+# (GIT_CONFIG_*, GIT_TEST_*, GIT_DEFAULT_REF_FORMAT, GIT_ALTERNATE_OBJECT_DIRECTORIES),
+# and TAR_OPTIONS and GZIP change the archives. Drop them all.
+for name in $(env | sed -n 's/^\(GIT_[A-Za-z0-9_]*\)=.*/\1/p'); do
+    unset "$name"
+done
+unset TAR_OPTIONS GZIP
 export GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null
 export GIT_AUTHOR_NAME=Test GIT_AUTHOR_EMAIL=test@example.com
 export GIT_COMMITTER_NAME=Test GIT_COMMITTER_EMAIL=test@example.com
@@ -40,8 +47,9 @@ archive() {
     git --git-dir="$repository" -c core.commitGraph=false log --reverse --format='%H %T %P' |
         sed 's/ *$//' > "$scratch/commits"
 
-    # Stabilize the container as well as the Git objects and graph bytes.
-    tar --sort=name --mtime=@1700000000 --owner=0 --group=0 --numeric-owner \
+    # Stabilize the container as well as the Git objects and graph bytes. The
+    # format is pinned because TAR_OPTIONS or the build default can change it.
+    tar --format=gnu --sort=name --mtime=@1700000000 --owner=0 --group=0 --numeric-owner \
         -cf "$scratch/git.tar" -C "$repository" .
     gzip -n -c "$scratch/git.tar" > "$scratch/git.tgz"
     checksum=$(sha256sum "$scratch/git.tgz" | awk '{print $1}')
@@ -71,7 +79,7 @@ for algorithm in sha1 sha256; do
     for count in 3 257; do
         [ "$algorithm" != sha256 ] || [ "$count" != 257 ] || continue
         repository="$scratch/$algorithm-$count.git"
-        git -c init.defaultBranch=main init -q --bare --template= \
+        git -c init.defaultBranch=main init -q --bare --template= --ref-format=files \
             --object-format="$algorithm" "$repository"
         tree=$(git --git-dir="$repository" mktree < /dev/null)
         i=0
