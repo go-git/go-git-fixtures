@@ -19,35 +19,44 @@ import (
 func TestCommitGraphFixtures(t *testing.T) {
 	t.Parallel()
 
-	for _, tag := range []string{
-		"commit-graph-sha1",
-		"commit-graph-chain-sha1",
-		"commit-graph-sha256",
-		"commit-graph-chain-sha256",
-		"commit-graph-chain-sha1-257",
-	} {
-		t.Run(tag, func(t *testing.T) {
-			t.Parallel()
+	for _, format := range []string{"sha1", "sha256"} {
+		for _, tag := range []string{"commit-graph-standalone", "commit-graph-split"} {
+			t.Run(tag+"/"+format, func(t *testing.T) {
+				t.Parallel()
 
-			matches := fixtures.ByTag(tag)
-			require.Len(t, matches, 1)
-			fixture := matches.One()
-			require.True(t, fixture.Is(".git"))
-			fs, err := fixture.DotGit(fixtures.WithMemFS())
-			require.NoError(t, err)
-			_, err = fs.Stat("refs/heads/main")
-			require.NoError(t, err)
-			verifyCommitGraphObjects(t, fixture, fs)
-			verifyCommitGraphFiles(t, fixture, fs)
-		})
+				matches := fixtures.ByTag(tag).ByObjectFormat(format)
+				require.Len(t, matches, 1)
+				verifyCommitGraphFixture(t, matches.One())
+			})
+		}
 	}
+
+	t.Run("commit-graph-split-257/sha1", func(t *testing.T) {
+		t.Parallel()
+
+		matches := fixtures.ByTag("commit-graph-split-257").ByObjectFormat("sha1")
+		require.Len(t, matches, 1)
+		verifyCommitGraphFixture(t, matches.One())
+	})
+}
+
+func verifyCommitGraphFixture(t *testing.T, fixture *fixtures.Fixture) {
+	t.Helper()
+
+	require.True(t, fixture.Is(".git"))
+	fs, err := fixture.DotGit(fixtures.WithMemFS())
+	require.NoError(t, err)
+	_, err = fs.Stat("refs/heads/main")
+	require.NoError(t, err)
+	verifyCommitGraphObjects(t, fixture, fs)
+	verifyCommitGraphFiles(t, fixture, fs)
 }
 
 func verifyCommitGraphObjects(t *testing.T, fixture *fixtures.Fixture, fs billy.Filesystem) {
 	t.Helper()
 
 	count := 3
-	if fixture.Is("commit-graph-chain-sha1-257") {
+	if fixture.Is("commit-graph-split-257") {
 		count = 257
 	}
 
@@ -122,7 +131,7 @@ func verifyCommitGraphFiles(t *testing.T, fixture *fixtures.Fixture, fs billy.Fi
 
 	paths := []string{"objects/info/commit-graph"}
 	var ids []string
-	if fixture.Is("commit-graph-split") {
+	if fixture.Is("commit-graph-split") || fixture.Is("commit-graph-split-257") {
 		chain := readGraphFixtureFile(t, fs, "objects/info/commit-graphs/commit-graph-chain")
 		ids = strings.Fields(string(chain))
 		require.Len(t, ids, len(fixture.CommitGraphEntries()))

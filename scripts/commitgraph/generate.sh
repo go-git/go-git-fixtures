@@ -56,7 +56,7 @@ archive() {
     cp "$scratch/git.tgz" "$destination/data/git-$checksum.tgz"
 
     # Verify the actual archive, including its object format and refs.
-    extracted="$scratch/extracted-$tag"
+    extracted="$scratch/extracted-$tag-$algorithm"
     mkdir "$extracted"
     tar -xzf "$scratch/git.tgz" -C "$extracted"
     git --git-dir="$extracted" commit-graph verify
@@ -71,8 +71,8 @@ archive() {
     printf '\t},\n' >> "$entries"
 
     head=$(git --git-dir="$repository" rev-parse HEAD)
-    printf '%s DotGitHash=%s Head=%s ObjectsCount=%s ObjectFormat=%s\n' \
-        "$tag" "$checksum" "$head" "$((count + 1))" "$algorithm"
+    printf 'Tag=%s ObjectFormat=%s DotGitHash=%s Head=%s ObjectsCount=%s\n' \
+        "$tag" "$algorithm" "$checksum" "$head" "$((count + 1))"
 }
 
 for algorithm in sha1 sha256; do
@@ -101,12 +101,12 @@ for algorithm in sha1 sha256; do
             tip=$(tail -n 1 "$chain")
             graph="$repository/objects/info/commit-graphs/graph-$tip.graph"
             [ "$(od -An -tu1 -j7 -N1 "$graph" | tr -d ' ')" -eq 0 ]
-            archive "commit-graph-chain-$algorithm-257" "$count"
+            archive commit-graph-split-257 "$count"
         else
-            archive "commit-graph-chain-$algorithm" "$count"
+            archive commit-graph-split "$count"
             git --git-dir="$repository" commit-graph write --reachable
             rm -rf "$repository/objects/info/commit-graphs"
-            archive "commit-graph-$algorithm" "$count"
+            archive commit-graph-standalone "$count"
         fi
     done
 done

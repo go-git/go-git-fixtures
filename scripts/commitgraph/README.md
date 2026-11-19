@@ -12,7 +12,7 @@ The script can also be invoked by absolute path from another directory.
 
 Generation requires Git 2.54 or later, Go (`gofmt`), GNU tar, gzip, sha256sum and
 standard POSIX shell utilities. Git 2.54.0 was used for the checked-in fixtures.
-The version check is not about graph features: SHA-256 and split graphs predate
+The version check is not about graph features: sha256 and split graphs predate
 it, and Git's loader never reads the base count in header byte 7, so the wrapped
 count needs no particular release. Graph bytes, and with them archive hashes,
 can differ between Git versions, so the check keeps regeneration on the release
@@ -24,19 +24,26 @@ through `CommitGraphEntries()` in oldest-first order.
 
 ## Fixture contents
 
+Tags name the graph layout and never the object format, so the same test code
+covers both formats by combining `ByTag` with `ByObjectFormat`:
+
+```go
+fixture := fixtures.ByTag("commit-graph-split").ByObjectFormat("sha256").One()
+```
+
 | Tag | Object format | Commits | Graph layout |
 | --- | --- | --- | --- |
-| `commit-graph-sha1` | SHA-1 | 3 | Standalone |
-| `commit-graph-chain-sha1` | SHA-1 | 3 | Three layers |
-| `commit-graph-sha256` | SHA-256 | 3 | Standalone |
-| `commit-graph-chain-sha256` | SHA-256 | 3 | Three layers |
-| `commit-graph-chain-sha1-257` | SHA-1 | 257 | 257 layers |
+| `commit-graph-standalone` | sha1 | 3 | Standalone |
+| `commit-graph-standalone` | sha256 | 3 | Standalone |
+| `commit-graph-split` | sha1 | 3 | Three layers |
+| `commit-graph-split` | sha256 | 3 | Three layers |
+| `commit-graph-split-257` | sha1 | 257 | 257 layers |
 
 Each archive contains a complete bare repository with config, symbolic HEAD,
 `refs/heads/main`, loose commit and tree objects, and graphs under `objects/info`.
 The three-commit standalone and split fixtures have identical objects and refs.
-The 257-layer SHA-1 chain extends the same history with one commit per layer.
-Its newest graph contains 256 SHA-1 graph IDs in its BASE chunk and zero in
+The 257-layer sha1 chain extends the same history with one commit per layer.
+Its newest graph contains 256 sha1 graph IDs in its BASE chunk and zero in
 header byte 7; its chain file lists all 257 graphs, oldest first.
 
 Both author and committer are `Test <test@example.com>`. Commit `i` has message
@@ -79,7 +86,7 @@ the gzip that compresses the archives.
 
 `commit_graph_entries.go` is regenerated with literal commit, tree and parent IDs
 in oldest-first order, keyed by archive hash. The script prints each fixture's
-unique tag, `DotGitHash`, `Head`, `ObjectsCount` and `ObjectFormat`. If a newer Git
+tag, `ObjectFormat`, `DotGitHash`, `Head` and `ObjectsCount`. If a newer Git
 changes graph bytes, update the corresponding registrations in `fixtures.go`
 using this output and remove only the superseded commit-graph archives. Do not
 replace unrelated fixtures.

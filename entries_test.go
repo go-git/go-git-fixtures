@@ -121,7 +121,7 @@ func TestCommitGraphEntriesReturnsNilForUnregisteredFixture(t *testing.T) {
 func TestCommitGraphEntriesReturnsFreshSlice(t *testing.T) {
 	t.Parallel()
 
-	f := fixtures.ByTag("commit-graph-chain-sha1").One()
+	f := fixtures.ByTag("commit-graph-split").ByObjectFormat("sha1").One()
 	require.NotNil(t, f)
 
 	a := f.CommitGraphEntries()
