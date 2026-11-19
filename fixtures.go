@@ -33,6 +33,8 @@ const (
 	basicOFSPackfileHash = "a3fed42da1e8189a077c0e6846c040dcf73fc9dd"
 	basicRefPackfileHash = "c544593473465e6315ad4182d04d366c4592b829"
 
+	bloomGitHead = "0610ebd8450cba55af358408b6222280ae0dc396"
+
 	objectFormatSHA1   = "sha1"
 	objectFormatSHA256 = "sha256"
 )
@@ -262,6 +264,28 @@ var fixtures = Fixtures{{
 	Head:         "ec6f456c0e8c7058a29611429965aa05c190b54b",
 	PackfileHash: "06ede69e9eba9f1af36eeee184402dc3ad705cd7",
 	DotGitHash:   "77b6511a6e67c99162ebcecd2763a9a19a7ad429",
+	ObjectFormat: objectFormatSHA1,
+}, {
+	// commit-graph with version 1 changed-path Bloom filters.
+	Tags:         []string{"commit-graph-bloom-v1", tagIndexV2, tagIndexExtTree},
+	Head:         bloomGitHead,
+	DotGitHash:   "60ced55389ccdcf659c11714d71cb12d7ba919db",
+	ObjectsCount: 539,
+	ObjectFormat: objectFormatSHA1,
+}, {
+	// commit-graph with version 2 changed-path Bloom filters.
+	Tags:         []string{"commit-graph-bloom-v2", tagIndexV2, tagIndexExtTree},
+	Head:         bloomGitHead,
+	DotGitHash:   "b7acf7a8a485303f29f8cd8356f5bf610233ab59",
+	ObjectsCount: 539,
+	ObjectFormat: objectFormatSHA1,
+}, {
+	// commit-graph chain whose base layer has Bloom filters with 3 hashes,
+	// under a layer without filters and a top layer with default settings.
+	Tags:         []string{"commit-graph-bloom-chain", tagIndexV2, tagIndexExtTree},
+	Head:         bloomGitHead,
+	DotGitHash:   "ff68a8119f3e517695262fccccec2ee4da23a7ff",
+	ObjectsCount: 539,
 	ObjectFormat: objectFormatSHA1,
 }, {
 	Tags:         []string{tagWorktree, "linked-worktree"},
